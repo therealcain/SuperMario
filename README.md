@@ -9,6 +9,7 @@ This project is created with Modern C++17 and SFML ( Simple and Fast Multimedia 
 * - - Empty
 * - - Brick
 * - - Question Mark
+* - Cloud
 * Enemies:
 * - Koopa Troopa
 * - Piranha Plant
