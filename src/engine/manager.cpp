@@ -1,5 +1,5 @@
 #include "manager.hpp"
-#include "helpers/debug.hpp"
+#include "helpers/functions.hpp"
 #include "helpers/values.hpp"
 
 #include <exception>

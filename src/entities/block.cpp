@@ -14,8 +14,8 @@ namespace Entity
             EntityID currentID = Manager::create("assets/block.png");
 
             Component::bases[currentID] -> sprite.setPosition(position);
-            Component::types[currentID] -> type        = Enum::Type::BLOCK;
-            Component::types[currentID] -> maybeBlock = type;
+            Component::types[currentID] -> type     = Enum::Type::BLOCK;
+            Component::types[currentID] -> whatType = type;
 
             Manager::addComponent<Component::Animation>(currentID, BE_NULL::FALSE);
             if(System::Animation::isPrepared(currentID)) {

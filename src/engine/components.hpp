@@ -7,6 +7,7 @@
 #include <vector>
 #include <optional>
 #include <functional>
+#include <variant>
 
 #include "helpers/enums.hpp"
 
@@ -15,6 +16,9 @@ using EntityID = long unsigned int; // similar to size_t
 
 using AnimationVector = std::vector<sf::IntRect>;
 using AnimationMap    = std::unordered_map<int, AnimationVector>;
+using VariantWhatType = std::variant</* Block Type */     Enum::Block, 
+                                     /* Mario Maturity */ Enum::Mature>;
+using OptVarWhatType  = std::optional<VariantWhatType>;
 
 namespace Component
 {
@@ -30,8 +34,8 @@ namespace Component
     {
         Enum::Type type;
 
-        // if the type is a block, which block ?
-        BlockOpt maybeBlock; 
+        // assignment of what object type is
+        OptVarWhatType whatType;
     }; 
     
     // ----------- ANIMATION ---------- //
