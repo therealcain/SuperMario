@@ -3,6 +3,7 @@
 
 #include "entities/block.hpp"
 #include "entities/coin.hpp"
+#include "entities/cloud.hpp"
 
 #include <iostream>
 
@@ -14,6 +15,7 @@ Game::Game()
 	Entity::Block::create(sf::Vector2f(65, 200),  Enum::Block::QUESTION_MARK);
 
 	Entity::Coin::create(sf::Vector2f(54, 58));
+	Entity::Cloud::create(sf::Vector2f(555, 300));
 }
 
 bool Game::run() noexcept {
