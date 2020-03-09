@@ -1,6 +1,7 @@
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
 
+#include <SFML/Graphics.hpp>
 #include "../engine/components.hpp"
 
 namespace Entity

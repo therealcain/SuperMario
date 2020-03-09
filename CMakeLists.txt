@@ -10,6 +10,6 @@ add_definitions("-DENABLE_DEBUG_MODE -g -Wall -pedantic -O3")
 
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 add_executable(mario main.cpp src/engine/window.cpp src/game.cpp src/engine/manager.cpp
-                     src/engine/system.cpp src/entities/block.cpp )
+                     src/engine/system.cpp src/entities/block.cpp src/entities/coin.cpp )
             
 target_link_libraries(mario sfml-graphics sfml-window sfml-system sfml-audio sfml-network)

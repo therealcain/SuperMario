@@ -46,7 +46,7 @@ namespace Component
         bool isFinished = false;
         bool isStarted  = false;
         bool stopWhenFinished = false;
-        bool allowPlay = false;
+        bool allowPlay = true;
 
         AnimationMap animations;
     };
