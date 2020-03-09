@@ -37,4 +37,4 @@ make
 ```
 And the game will be generated to the bin folder
 
-In case there is any sort of errors make sure you have the latest or installed `make` and `cmake` binaries.
+In case there is any sort of errors make sure you have the latest or installed `make`,`cmake` and `libsfml-dev` binaries.
