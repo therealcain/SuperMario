@@ -16,6 +16,7 @@ Game::Game()
 	Entity::Block::create(sf::Vector2f(65, 200),  Enum::Block::QUESTION_MARK);
 
 	Entity::Coin::create(sf::Vector2f(54, 58));
+	Entity::Coin::create(sf::Vector2f(300, 400));
 	Entity::Cloud::create(sf::Vector2f(555, 300));
 
 	Entity::Player::create(sf::Vector2f(200, 200), Enum::Mature::CHILD);

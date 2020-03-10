@@ -1,5 +1,6 @@
 #include "system.hpp"
 #include "helpers/values.hpp"
+#include "helpers/functions.hpp"
 
 #include <exception>
 #include <cmath>
@@ -81,11 +82,22 @@ namespace System
         void setCurrentAnimation(EntityID id, int pos) noexcept 
         {
             auto& animation = Component::animations[id].value();
-            animation.currentAnimation = pos;
+            
+            // make sure position exists
+            if(animation.animations.find(pos) != animation.animations.end()) { 
+                if(pos != animation.currentAnimation) {
+                    animation.currentAnimation = pos;            
 
-            // Set the first frame to sprite
-            auto& base = Component::bases[id].value();
-            base.sprite.setTextureRect(animation.animations[pos][0]); 
+                    // Set the first frame to sprite
+                    auto& base = Component::bases[id].value();
+                    base.sprite.setTextureRect(animation.animations[pos][0]); 
+                }
+            }
+            #ifdef ENABLE_DEBUG_MODE
+            else {
+                Debug::print("ID:", id, " - position is not exist!");
+            }
+            #endif
         }
 
         void setNextAnimationTimer(EntityID id, unsigned int next_animation_timer = 500) noexcept
@@ -146,5 +158,129 @@ namespace System
         }
 
     } // namespace Animation
-    
+
+    namespace Movement
+    {
+        bool isPrepared(EntityID id)
+        {
+            if(not Component::bases[id].has_value()) {
+                throw std::runtime_error("Failed to access 'map - bases'");
+            }
+
+            if(not Component::movements[id].has_value()) {
+                throw std::runtime_error("Failed to access 'map - movements'");
+            }
+
+            if(not Component::animations[id].has_value()) {
+                throw std::runtime_error("Failed to access 'map - movements'");
+            }
+        
+            return SUCCESS;
+        }
+
+        void setMoving(EntityID id, MOVING moving) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            movement.isMoving = bool(moving);
+        }
+
+        void setLookingDirection(EntityID id, Enum::Direction direction) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            movement.lookingDirection = direction;
+        }
+
+        void moveRight(EntityID id, float speed) noexcept
+        {
+            auto& base = Component::bases[id].value();
+            base.sprite.move(sf::Vector2f(speed, 0));
+            
+            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setLookingDirection(id, Enum::Direction::RIGHT);
+
+            #ifdef ENABLE_DEBUG_MODE
+            Debug::print("ID:", id, " Moving to right!");
+            #endif
+        }
+
+        void moveRight(EntityID id, float speed, Enum::Animation anim) noexcept
+        {
+            auto& base = Component::bases[id].value();
+            base.sprite.move(sf::Vector2f(speed, 0));
+
+            Animation::setCurrentAnimation(id, int(anim));
+            Animation::setAllowPlay(id, ALLOW::TRUE);
+
+            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setLookingDirection(id, Enum::Direction::RIGHT);
+
+            #ifdef ENABLE_DEBUG_MODE
+            Debug::print("ID:", id, " Moving to right!");
+            #endif
+        }
+
+        void moveRight(EntityID id, float speed, Enum::Animation anim, Enum::Mature maturity) noexcept
+        {
+            auto& base = Component::bases[id].value();
+            base.sprite.move(sf::Vector2f(speed, 0));
+
+            Animation::setCurrentAnimation(id, sum<int>(anim, maturity));
+            Animation::setAllowPlay(id, ALLOW::TRUE);
+
+            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setLookingDirection(id, Enum::Direction::RIGHT);
+
+            #ifdef ENABLE_DEBUG_MODE
+            Debug::print("ID:", id, " Moving to right!");
+            #endif
+        }
+
+        void moveLeft(EntityID id, float speed) noexcept
+        {
+            auto& base = Component::bases[id].value();
+            base.sprite.move(sf::Vector2f(-speed, 0));
+
+            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setLookingDirection(id, Enum::Direction::LEFT);
+
+            #ifdef ENABLE_DEBUG_MODE
+            Debug::print("ID:", id, " Moving to left!");
+            #endif
+        }
+
+        void moveLeft(EntityID id, float speed, Enum::Animation anim) noexcept
+        {
+            auto& base = Component::bases[id].value();
+            base.sprite.move(sf::Vector2f(-speed, 0));
+
+            Animation::setCurrentAnimation(id, int(anim));
+            Animation::setAllowPlay(id, ALLOW::TRUE);
+
+            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setLookingDirection(id, Enum::Direction::LEFT);
+
+            #ifdef ENABLE_DEBUG_MODE
+            Debug::print("ID:", id, " Moving to left!");
+            #endif
+        }
+
+        void moveLeft(EntityID id, float speed, Enum::Animation anim, Enum::Mature maturity) noexcept
+        {
+            auto& base = Component::bases[id].value();
+            base.sprite.move(sf::Vector2f(-speed, 0));
+
+            Animation::setCurrentAnimation(id, sum<int>(anim, maturity));
+            Animation::setAllowPlay(id, ALLOW::TRUE);
+
+            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setLookingDirection(id, Enum::Direction::LEFT);
+
+            #ifdef ENABLE_DEBUG_MODE
+            Debug::print("ID:", id, " Moving to left!");
+            #endif
+        }
+
+
+    } // namespace Movement
+
 } // namespace System

@@ -40,6 +40,13 @@ namespace Manager
         else if constexpr(std::is_same_v<T, Component::UpdateFunction>) {
             Component::updates[id].reset();
         }
+        else if constexpr(std::is_same_v<T, Component::Movement>) {
+            if(bool(be_null)) {
+                Component::movements[id].reset();
+            } else {
+                Component::movements[id] = T();
+            }
+        }
     }
 }   
 

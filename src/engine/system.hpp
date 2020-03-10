@@ -33,17 +33,33 @@ namespace System
         void setFrames(EntityID id, int pos, const AnimationVector&& anims) noexcept;
         void setFrames(EntityID id, int pos, const sf::IntRect&& anim) noexcept;
         void addFrame(EntityID id, int pos, const sf::IntRect&& anim) noexcept;
-        // this function is allowed to be called in the game loop
         void setCurrentAnimation(EntityID id, int pos) noexcept;
         void setNextAnimationTimer(EntityID id, unsigned int next_animation_timer) noexcept;
         void setStopWhenFinished(EntityID id, STOP stop) noexcept;
         void setAllowPlay(EntityID id, ALLOW allow) noexcept;
-        // this function is needed to be called in the game loop
+        // this function is needed to be called in the update loop
         void play(EntityID id) noexcept;
 
         // Helping extract the correct texture rect
         sf::IntRect extractTextureRect(const sf::IntRect&& rect) noexcept;
     } // namespace Animation
+
+    // ----------- Animation ------------ //
+    namespace Movement 
+    {
+        bool isPrepared(EntityID id);
+        void setMoving(EntityID id, MOVING moving) noexcept;
+        void setLookingDirection(EntityID id, Enum::Direction direction) noexcept;
+        void moveRight(EntityID id, float speed) noexcept;
+        void moveRight(EntityID id, float speed, Enum::Animation anim) noexcept;
+        void moveRight(EntityID id, float speed, Enum::Animation anim, Enum::Mature maturity) noexcept;
+        void moveLeft(EntityID id, float speed) noexcept;
+        void moveLeft(EntityID id, float speed, Enum::Animation anim) noexcept;
+        void moveLeft(EntityID id, float speed, Enum::Animation anim, Enum::Mature maturity) noexcept;
+        void jump(EntityID id, float speed, unsigned int height) noexcept;
+        void jump(EntityID id, float speed, unsigned int height, Enum::Animation anim) noexcept;
+        void jump(EntityID id, float speed, unsigned int height, Enum::Animation anim, Enum::Mature maturity) noexcept;
+    }
 
 } // namespace System
 

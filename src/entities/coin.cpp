@@ -14,7 +14,7 @@ namespace Entity {
 
             Manager::addComponent<Component::Animation>(currentID, BE_NULL::FALSE);
             if(System::Animation::isPrepared(currentID)) {
-                constexpr int animPos = 0;
+                static constexpr int animPos = 0;
                 
                 System::Animation::setFrames(currentID, animPos, {
                     sf::IntRect(0, 0, 10, 14),

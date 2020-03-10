@@ -8,6 +8,15 @@
         "ratio": "cpp",
         "tuple": "cpp",
         "type_traits": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "stdexcept": "cpp",
+        "optional": "cpp",
+        "random": "cpp",
+        "limits": "cpp",
+        "new": "cpp",
+        "*.tcc": "cpp",
+        "cmath": "cpp",
+        "variant": "cpp",
+        "memory": "cpp"
     }
 }

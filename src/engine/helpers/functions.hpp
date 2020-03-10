@@ -29,4 +29,17 @@ namespace Debug
 
 #endif // ENABLE_DEBUG_MODE
 
+// Return the sum of unlimited elements
+template <typename Ret, typename T, typename U>
+constexpr Ret sum(T a, U b) noexcept 
+{
+    return static_cast<Ret>(a) + static_cast<Ret>(b);
+}
+
+template <typename Ret, typename T, typename U, typename... Ts>
+constexpr Ret sum(T t, U u, Ts... ts) noexcept
+{
+    return static_cast<Ret>(t) + sum<Ret>(u, ts...);
+}
+
 #endif

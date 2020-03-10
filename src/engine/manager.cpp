@@ -15,6 +15,7 @@ namespace Manager
         addComponent<Component::Type>(id, BE_NULL::TRUE);
         addComponent<Component::Animation>(id, BE_NULL::TRUE);
         addComponent<Component::UpdateFunction>(id, BE_NULL::TRUE);
+        addComponent<Component::Movement>(id, BE_NULL::TRUE);
 
         if(not Component::bases[id] ->texture.loadFromFile(png)) {
             throw std::runtime_error( std::string("Failed to load " + png ));
