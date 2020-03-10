@@ -89,10 +89,10 @@ namespace Enum
 
 
 // ----- Using's ----- //
-    using BE_NULL  = Enum::BOOLEAN;
-    using STOP     = Enum::BOOLEAN;
-    using ALLOW    = Enum::BOOLEAN;
-    using MOVING   = Enum::BOOLEAN;
-    
+using BE_NULL  = Enum::BOOLEAN;
+using STOP     = Enum::BOOLEAN;
+using ALLOW    = Enum::BOOLEAN;
+using MOVING   = Enum::BOOLEAN;
+using RUNNING  = Enum::BOOLEAN;
     
 #endif

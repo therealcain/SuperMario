@@ -49,7 +49,9 @@ namespace System
     {
         bool isPrepared(EntityID id);
         void setMoving(EntityID id, MOVING moving) noexcept;
+        void setRunning(EntityID id, RUNNING running) noexcept;
         void setLookingDirection(EntityID id, Enum::Direction direction) noexcept;
+        Enum::Direction getLookingDirection(EntityID id) noexcept;
         void moveRight(EntityID id, float speed) noexcept;
         void moveRight(EntityID id, float speed, Enum::Animation anim) noexcept;
         void moveRight(EntityID id, float speed, Enum::Animation anim, Enum::Mature maturity) noexcept;
@@ -59,6 +61,12 @@ namespace System
         void jump(EntityID id, float speed, unsigned int height) noexcept;
         void jump(EntityID id, float speed, unsigned int height, Enum::Animation anim) noexcept;
         void jump(EntityID id, float speed, unsigned int height, Enum::Animation anim, Enum::Mature maturity) noexcept;
+    }
+
+    // ----------- Physics ------------ //
+    namespace Physics
+    {
+        
     }
 
 } // namespace System

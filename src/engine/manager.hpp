@@ -47,6 +47,13 @@ namespace Manager
                 Component::movements[id] = T();
             }
         }
+        else if constexpr(std::is_same_v<T, Component::Physics>) {
+            if(bool(be_null)) {
+                Component::physics[id].reset();
+            } else {
+                Component::physics[id] = T();
+            }
+        }
     }
 }   
 

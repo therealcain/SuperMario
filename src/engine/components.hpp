@@ -67,6 +67,12 @@ namespace Component
         Enum::Direction lookingDirection;
     };
 
+    // ----------- PHYSICS ---------- //
+    struct Physics
+    {
+
+    };
+
 } // namespace Component
 
 // ----- Using's ----- //
@@ -75,12 +81,14 @@ using ComponentTypeOpt      = std::optional<Component::Type>;
 using ComponentAnimationOpt = std::optional<Component::Animation>;
 using ComponentUpdateOpt    = std::optional<Component::UpdateFunction>;
 using ComponentMovementOpt  = std::optional<Component::Movement>;
+using ComponentPhysicsOpt   = std::optional<Component::Physics>;
 
 using ComponentBaseMap      = std::unordered_map<EntityID, ComponentBaseOpt>;
 using ComponentTypeMap      = std::unordered_map<EntityID, ComponentTypeOpt>;
 using ComponentAnimationMap = std::unordered_map<EntityID, ComponentAnimationOpt>;
 using ComponentUpdateMap    = std::unordered_map<EntityID, ComponentUpdateOpt>;
 using ComponentMovementMap  = std::unordered_map<EntityID, ComponentMovementOpt>;
+using ComponentPhysicsMap   = std::unordered_map<EntityID, ComponentPhysicsOpt>;
 
 namespace Component
 {
@@ -90,6 +98,7 @@ namespace Component
     inline ComponentAnimationMap animations;
     inline ComponentUpdateMap    updates;
     inline ComponentMovementMap  movements;
+    inline ComponentPhysicsMap   physics;
 } // namespace Component
 
 #endif

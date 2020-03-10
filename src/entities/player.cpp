@@ -3,6 +3,7 @@
 #include "../engine/manager.hpp"
 #include "../engine/system.hpp"
 #include "../engine/helpers/functions.hpp"
+#include "../engine/components.hpp"
 
 namespace Entity 
 {
@@ -45,24 +46,83 @@ namespace Entity
 			        System::Animation::extractTextureRect(sf::IntRect(50, 98, 65, 114))
                 });
 
-                System::Animation::setNextAnimationTimer(currentID, 150);
-                System::Animation::setAllowPlay(currentID, ALLOW::TRUE);
+                System::Animation::setAllowPlay(currentID, ALLOW::FALSE);
                 System::Animation::setCurrentAnimation(currentID, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::CHILD));
             }
 
             Manager::addComponent<Component::Movement>(currentID, BE_NULL::FALSE);
+            Manager::addComponent<Component::Physics>(currentID, BE_NULL::FALSE);
             Manager::addComponent<Component::UpdateFunction>(currentID, BE_NULL::FALSE);
-            Component::updates[currentID] = [](EntityID id) 
+            Component::updates[currentID] = [](EntityID id) -> void
+            {
+                Helper::startMovement(id);
+
+                System::Animation::play(id);
+            };
+        }
+
+        namespace Helper
+        {
+            void startMovement(EntityID id)
             {
                 if(System::Movement::isPrepared(id))
                 {
+                    // get the maturity from the optional variant
+                    const auto maturity = std::get<Enum::Mature>(Component::types[id] ->whatType.value());
+                    // default speed to check if the actualy speed is any different
+                    static constexpr float DEFAULT_SPEED = 2;
+                    // if shift is been pressed change the `speed` to running
+                    float speed = DEFAULT_SPEED;
+                    if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+                        speed = 3;
+                    }
+
                     if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-                        System::Movement::moveRight(id, 1, Enum::Animation::WALK_RIGHT, Enum::Mature::CHILD);            
+                        System::Animation::setAllowPlay(id, ALLOW::TRUE);
+                        System::Movement::moveRight(id, speed);
+                        if(speed != DEFAULT_SPEED) {
+                            System::Movement::setRunning(id, RUNNING::TRUE);
+                            System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::RUN_RIGHT, maturity));
+                            System::Animation::setNextAnimationTimer(id, 100);
+                        } else {
+                            System::Movement::setRunning(id, RUNNING::FALSE);
+                            System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::WALK_RIGHT, maturity));
+                            System::Animation::setNextAnimationTimer(id, 150);
+                        }
                     } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-                        System::Movement::moveLeft(id, 1, Enum::Animation::WALK_RIGHT, Enum::Mature::CHILD);
+                        System::Animation::setAllowPlay(id, ALLOW::TRUE);
+                        System::Movement::moveLeft(id, speed);
+                        if(speed != DEFAULT_SPEED) {
+                            System::Movement::setRunning(id, RUNNING::TRUE);
+                            System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::RUN_LEFT, maturity));
+                            System::Animation::setNextAnimationTimer(id, 100);
+                        } else {
+                            System::Movement::setRunning(id, RUNNING::FALSE);
+                            System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::WALK_LEFT, maturity));
+                            System::Animation::setNextAnimationTimer(id, 150);
+                        }
+                    } else {
+                        // IDLE
+                        System::Animation::setAllowPlay(id, ALLOW::FALSE);
+                        const auto lookingDirection = System::Movement::getLookingDirection(id);
+                        switch(lookingDirection)
+                        {
+                            case Enum::Direction::LEFT:
+                                System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::IDLE_LEFT, maturity));
+                            break; 
+
+                            case Enum::Direction::RIGHT:
+                                System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::IDLE_RIGHT, maturity));
+                            break;
+
+                            case Enum::Direction::TOP:    [[fallthrough]];
+                            case Enum::Direction::BOTTOM: [[fallthrough]];
+                            case Enum::Direction::NONE:   [[fallthrough]];
+                            default: break;
+                        }
                     }
                 }
-            };
-        }
+            }
+        } // namespace Helper
     } // namespace Player
 } // namespace Entity

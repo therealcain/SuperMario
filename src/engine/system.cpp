@@ -190,6 +190,18 @@ namespace System
             movement.lookingDirection = direction;
         }
 
+        void setRunning(EntityID id, RUNNING running) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            movement.isRunning = int(running);
+        }
+
+        Enum::Direction getLookingDirection(EntityID id) noexcept 
+        {
+            auto& movement = Component::movements[id].value();
+            return movement.lookingDirection;
+        }
+
         void moveRight(EntityID id, float speed) noexcept
         {
             auto& base = Component::bases[id].value();
@@ -279,8 +291,11 @@ namespace System
             Debug::print("ID:", id, " Moving to left!");
             #endif
         }
-
-
     } // namespace Movement
+
+    namespace Physics
+    {
+        
+    } // namespace Physics
 
 } // namespace System
