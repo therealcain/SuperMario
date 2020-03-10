@@ -1,9 +1,11 @@
 #include "system.hpp"
 #include "helpers/values.hpp"
 #include "helpers/functions.hpp"
+#include "manager.hpp"
 
 #include <exception>
 #include <cmath>
+#include <vector>
 
 namespace System
 {
@@ -161,7 +163,7 @@ namespace System
 
     namespace Movement
     {
-        bool isPrepared(EntityID id)
+        bool isPrepared(EntityID id, WITH_PHYSICS with_physics)
         {
             if(not Component::bases[id].has_value()) {
                 throw std::runtime_error("Failed to access 'map - bases'");
@@ -172,7 +174,13 @@ namespace System
             }
 
             if(not Component::animations[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - movements'");
+                throw std::runtime_error("Failed to access 'map - animations'");
+            }
+
+            if(bool(with_physics)) {
+                if(not Component::physics[id].has_value()) {
+                    throw std::runtime_error("Failed to access 'map - physics'");
+                }
             }
         
             return SUCCESS;
@@ -295,7 +303,119 @@ namespace System
 
     namespace Physics
     {
-        
+        bool isPrepared(EntityID id)
+        {
+            if(not Component::bases[id].has_value()) {
+                throw std::runtime_error("Failed to access 'map - bases'");
+            }
+
+            if(not Component::physics[id].has_value()) {
+                throw std::runtime_error("Failed to access 'map - physics'");
+            }
+
+            return SUCCESS;
+        }
+
+        void setSpeed(EntityID id, float speed) noexcept
+        {
+            auto& physics = Component::physics[id].value();
+            physics.speed = speed;
+        }
+
+        bool isMidAir(EntityID id) noexcept
+        {
+            auto& physics = Component::physics[id].value();
+            return !physics.onGround;
+        }
+
+        bool isOnGround(EntityID id) noexcept
+        {
+            auto& physics = Component::physics[id].value();
+            return physics.onGround;
+        }
+
+        void start(EntityID id) noexcept
+        {
+            auto& physics = Component::physics[id].value();
+            bool touchingGroundCounter = false;
+
+            for(EntityID secondId = 0; secondId < Component::maxIndexes; secondId++) 
+            {
+                if(Manager::canAccess(secondId)) {
+                    if(secondId != id) {
+                        auto collision = /*Physics*/ checkIntersections(id, secondId);
+                        auto& secondType = Component::types[secondId].value(); // throwing
+
+                        if(secondType.type == Enum::Type::BLOCK)
+                        {
+                            if(collision == COLLISION::TOP) {
+                                touchingGroundCounter = true;
+                            } 
+                        }
+                    }
+                }
+            }
+
+            if(touchingGroundCounter) {
+                physics.onGround = true;
+            } else {
+                physics.onGround = false;
+            }
+
+            if(not physics.onGround) {
+                Component::bases[id] ->sprite.move(0, physics.speed);
+            }
+        }
+
+        COLLISION checkIntersections(EntityID id, EntityID second_id) noexcept
+        {
+            const sf::FloatRect idGlobalBounds  = Component::bases[id]        -> sprite.getGlobalBounds();
+			const sf::FloatRect sidGlobalBounds = Component::bases[second_id] -> sprite.getGlobalBounds();
+		
+			const float idRight   = idGlobalBounds.left  + (idGlobalBounds.width / 2);
+			const float idBottom  = idGlobalBounds.top   + (idGlobalBounds.height / 2);
+			const float sidRight  = sidGlobalBounds.left + (sidGlobalBounds.width / 2);
+			const float sidBottom = sidGlobalBounds.top  + (sidGlobalBounds.height / 2);
+
+            if(idGlobalBounds.intersects(sidGlobalBounds)) {
+				std::vector<COLLISION> collisionArray;
+                // only 3 sides possible to touch
+                collisionArray.reserve(3); 
+				
+				// Touching on the top
+				if(sidBottom >= idGlobalBounds.top && idRight >= sidGlobalBounds.left && sidRight >= idGlobalBounds.left) {
+					collisionArray.push_back(COLLISION::TOP);
+				}
+
+				// Touching on the right
+				if(idRight >= sidGlobalBounds.left && idBottom >= sidGlobalBounds.top && sidBottom >= idGlobalBounds.top) {
+					collisionArray.push_back(COLLISION::RIGHT);
+				}
+
+				// Touching on the left
+				if(sidRight >= idGlobalBounds.left && idBottom >= sidGlobalBounds.top && sidBottom >= idGlobalBounds.top) {
+					collisionArray.push_back(COLLISION::LEFT);
+				}
+
+				// Touching on the bottom
+				if(idBottom >= sidGlobalBounds.top && idRight >= sidGlobalBounds.left && sidRight >= idGlobalBounds.left) {
+					collisionArray.push_back(COLLISION::BOTTOM);
+				}
+
+				// if hit multiple sides, return top
+				if(collisionArray.size() > 1) {
+					return COLLISION::TOP;
+				} else if(collisionArray.size() != 0) {
+					return collisionArray.at(0); 
+				}
+
+                #ifdef ENABLE_DEBUG_MODE
+                Debug::print("ID:", id, " overlapping with ", second_id, '!');
+                #endif
+			}
+
+            return COLLISION::NONE;
+        }
     } // namespace Physics
 
 } // namespace System

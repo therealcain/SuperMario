@@ -10,6 +10,7 @@
 #include <variant>
 
 #include "helpers/enums.hpp"
+#include "helpers/values.hpp"
 
 // ----- Using's ------ //
 using EntityID = long unsigned int; // similar to size_t
@@ -63,6 +64,7 @@ namespace Component
     {
         bool isMoving  = false;
         bool isRunning = false;
+        bool isJumping = false;
         
         Enum::Direction lookingDirection;
     };
@@ -70,7 +72,8 @@ namespace Component
     // ----------- PHYSICS ---------- //
     struct Physics
     {
-
+        bool onGround;
+        float speed = DEFAULT_SPEED * 2;
     };
 
 } // namespace Component

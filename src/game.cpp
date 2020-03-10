@@ -11,15 +11,12 @@
 Game::Game() 
 	: render(Window::window)
 {
-	Entity::Block::create(sf::Vector2f(100, 100), Enum::Block::EMPTY);
-	Entity::Block::create(sf::Vector2f(23, 400),  Enum::Block::BRICK);
-	Entity::Block::create(sf::Vector2f(65, 200),  Enum::Block::QUESTION_MARK);
+	for(size_t i = 1; i < 20; i++) {
+		Entity::Block::create(sf::Vector2f(140 + ( 15 * i), 220), Enum::Block::EMPTY);
+	}
+	
 
-	Entity::Coin::create(sf::Vector2f(54, 58));
-	Entity::Coin::create(sf::Vector2f(300, 400));
-	Entity::Cloud::create(sf::Vector2f(555, 300));
-
-	Entity::Player::create(sf::Vector2f(200, 200), Enum::Mature::TEENAGE);
+	Entity::Player::create(sf::Vector2f(200, 50), Enum::Mature::CHILD);
 }
 
 bool Game::run() noexcept {

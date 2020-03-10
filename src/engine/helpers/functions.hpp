@@ -16,7 +16,6 @@
 #include "checkers.hpp"
 
 #ifdef ENABLE_DEBUG_MODE
-
 namespace Debug
 {
     template<typename... Ts>
@@ -35,20 +34,19 @@ namespace Debug
         throw std::runtime_error("\n");
     }
 } // namespace Debug
-
 #endif // ENABLE_DEBUG_MODE
 
 // Return the sum of unlimited elements
-template <typename Ret, typename T, typename U>
-inline constexpr Ret sum(T a, U b) noexcept 
+template <typename RetType, typename T, typename U>
+inline constexpr RetType sum(T t, U u) noexcept 
 {
-    return static_cast<Ret>(a) + static_cast<Ret>(b);
+    return static_cast<RetType>(t) + static_cast<RetType>(u);
 }
 
-template <typename Ret, typename T, typename U, typename... Ts>
-inline constexpr Ret sum(T t, U u, Ts... ts) noexcept
+template <typename RetType, typename T, typename U, typename... Ts>
+inline constexpr RetType sum(T t, U u, Ts... ts) noexcept
 {
-    return static_cast<Ret>(t) + sum<Ret>(u, ts...);
+    return static_cast<RetType>(t) + sum<RetType>(u, ts...);
 }
 
 #endif

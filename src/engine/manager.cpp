@@ -12,7 +12,7 @@ namespace Manager
         EntityID id = Component::maxIndexes;
 
         addComponent<Component::Base>(id, BE_NULL::FALSE);
-        addComponent<Component::Type>(id, BE_NULL::TRUE);
+        addComponent<Component::Type>(id, BE_NULL::FALSE);
         addComponent<Component::Animation>(id, BE_NULL::TRUE);
         addComponent<Component::UpdateFunction>(id, BE_NULL::TRUE);
         addComponent<Component::Movement>(id, BE_NULL::TRUE);
@@ -57,6 +57,8 @@ namespace Manager
             Component::types.erase(id);
             Component::animations.erase(id);
             Component::updates.erase(id);
+            Component::movements.erase(id);
+            Component::physics.erase(id);
 
             #ifdef ENABLE_DEBUG_MODE
             Debug::print("ID:", id, " Removed!");

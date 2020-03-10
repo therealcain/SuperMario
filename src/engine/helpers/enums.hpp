@@ -76,23 +76,17 @@ namespace Enum
         BOTTOM,
         NONE
     };
-
-    // ----------- MOVEMENT ---------- //
-    enum class Movement {
-        IDLE,
-        WALK,
-        RUN,
-        JUMP
-    };
     
 } // namespace Enum
 
 
 // ----- Using's ----- //
-using BE_NULL  = Enum::BOOLEAN;
-using STOP     = Enum::BOOLEAN;
-using ALLOW    = Enum::BOOLEAN;
-using MOVING   = Enum::BOOLEAN;
-using RUNNING  = Enum::BOOLEAN;
+using BE_NULL      = Enum::BOOLEAN;
+using STOP         = Enum::BOOLEAN;
+using ALLOW        = Enum::BOOLEAN;
+using MOVING       = Enum::BOOLEAN;
+using RUNNING      = Enum::BOOLEAN;
+using WITH_PHYSICS = Enum::BOOLEAN;
+using COLLISION    = Enum::Direction;
     
 #endif

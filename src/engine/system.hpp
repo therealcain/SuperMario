@@ -47,7 +47,7 @@ namespace System
     // ----------- Animation ------------ //
     namespace Movement 
     {
-        bool isPrepared(EntityID id);
+        bool isPrepared(EntityID id, WITH_PHYSICS with_physics);
         void setMoving(EntityID id, MOVING moving) noexcept;
         void setRunning(EntityID id, RUNNING running) noexcept;
         void setLookingDirection(EntityID id, Enum::Direction direction) noexcept;
@@ -66,7 +66,13 @@ namespace System
     // ----------- Physics ------------ //
     namespace Physics
     {
-        
+        bool isPrepared(EntityID id);
+        void setSpeed(EntityID id, float speed) noexcept;
+        bool isMidAir(EntityID id) noexcept;
+        bool isOnGround(EntityID id) noexcept;
+        void start(EntityID id) noexcept;
+
+        COLLISION checkIntersections(EntityID id, EntityID second_id) noexcept;
     }
 
 } // namespace System
