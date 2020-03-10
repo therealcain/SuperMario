@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <type_traits>
+#include <stdexcept>
 
 #include "checkers.hpp"
 
@@ -24,6 +25,14 @@ namespace Debug
     {
         ((std::cout << args), ...);
         std::cout << std::endl;
+    }
+
+    template<typename... Ts>
+    constexpr std::enable_if_t<((std::is_arithmetic_v<Ts> || is_string_v<Ts>) && ...)> printAndThrow(Ts... args)
+        // requires ((std::is_arithmetic_v<Ts> || is_string_v<Ts>) && ...) // C++20
+    {
+        ((std::cout << args), ...);
+        throw std::runtime_error("\n");
     }
 } // namespace Debug
 

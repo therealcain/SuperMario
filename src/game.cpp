@@ -19,7 +19,7 @@ Game::Game()
 	Entity::Coin::create(sf::Vector2f(300, 400));
 	Entity::Cloud::create(sf::Vector2f(555, 300));
 
-	Entity::Player::create(sf::Vector2f(200, 200), Enum::Mature::CHILD);
+	Entity::Player::create(sf::Vector2f(200, 200), Enum::Mature::TEENAGE);
 }
 
 bool Game::run() noexcept {

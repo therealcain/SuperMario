@@ -17,6 +17,7 @@
         "*.tcc": "cpp",
         "cmath": "cpp",
         "variant": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "thread": "cpp"
     }
 }

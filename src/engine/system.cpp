@@ -95,7 +95,7 @@ namespace System
             }
             #ifdef ENABLE_DEBUG_MODE
             else {
-                Debug::print("ID:", id, " - position is not exist!");
+                Debug::printAndThrow("ID:", id, " - position is not existed!");
             }
             #endif
         }
