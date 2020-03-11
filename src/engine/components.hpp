@@ -74,6 +74,9 @@ namespace Component
     {
         bool onGround;
         float speed = DEFAULT_SPEED * 2;
+        unsigned int maxJumpHeight = 400;
+
+        sf::Clock jumpClock;
     };
 
 } // namespace Component

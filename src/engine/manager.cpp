@@ -51,7 +51,7 @@ namespace Manager
 
     void remove(EntityID id) noexcept 
     {
-        if(/*Manager*/ canAccess(id))
+        if(Manager::canAccess(id))
         {
             Component::bases.erase(id);
             Component::types.erase(id);

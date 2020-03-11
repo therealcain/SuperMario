@@ -38,15 +38,18 @@ namespace Debug
 
 // Return the sum of unlimited elements
 template <typename RetType, typename T, typename U>
-inline constexpr RetType sum(T t, U u) noexcept 
+constexpr RetType sum(T t, U u) noexcept 
 {
     return static_cast<RetType>(t) + static_cast<RetType>(u);
 }
 
+// This is not being used currently
+#if false
 template <typename RetType, typename T, typename U, typename... Ts>
-inline constexpr RetType sum(T t, U u, Ts... ts) noexcept
+constexpr RetType sum(T t, U u, Ts... ts) noexcept
 {
     return static_cast<RetType>(t) + sum<RetType>(u, ts...);
 }
+#endif
 
 #endif

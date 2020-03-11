@@ -22,7 +22,7 @@ namespace System
     void Render::drawAll() noexcept 
     {
         for(size_t i = 0; i < Component::maxIndexes; i++) {
-            /*Render*/ draw(i);
+            Render::draw(i);
         }
     }
 
@@ -34,14 +34,14 @@ namespace System
             if(Component::updates[id].has_value())
             {
                 auto& update = Component::updates[id].value();
-                /*oprator()*/ update(id);
+                update(id);
             }
         }
 
         void updateAll() noexcept 
         {
             for(size_t i = 0; i < Component::updates.size(); i++) {
-                /*Game*/ update(i);
+                Game::update(i);
             }
         }
     } // namespace Game
@@ -152,12 +152,15 @@ namespace System
             }
         }
 
-        sf::IntRect extractTextureRect(const sf::IntRect&& rect) noexcept 
+        namespace Helper
         {
-            const int width = std::abs(rect.left - rect.width);
-            const int height = std::abs(rect.top - rect.height);
-            return sf::IntRect(rect.left, rect.top, width, height);
-        }
+            sf::IntRect extractTextureRect(const sf::IntRect&& rect) noexcept 
+            {
+                const int width = std::abs(rect.left - rect.width);
+                const int height = std::abs(rect.top - rect.height);
+                return sf::IntRect(rect.left, rect.top, width, height);
+            }
+        } // namespace Helper
 
     } // namespace Animation
 
@@ -186,24 +189,6 @@ namespace System
             return SUCCESS;
         }
 
-        void setMoving(EntityID id, MOVING moving) noexcept
-        {
-            auto& movement = Component::movements[id].value();
-            movement.isMoving = bool(moving);
-        }
-
-        void setLookingDirection(EntityID id, Enum::Direction direction) noexcept
-        {
-            auto& movement = Component::movements[id].value();
-            movement.lookingDirection = direction;
-        }
-
-        void setRunning(EntityID id, RUNNING running) noexcept
-        {
-            auto& movement = Component::movements[id].value();
-            movement.isRunning = int(running);
-        }
-
         Enum::Direction getLookingDirection(EntityID id) noexcept 
         {
             auto& movement = Component::movements[id].value();
@@ -229,23 +214,6 @@ namespace System
             base.sprite.move(sf::Vector2f(speed, 0));
 
             Animation::setCurrentAnimation(id, int(anim));
-            Animation::setAllowPlay(id, ALLOW::TRUE);
-
-            Movement::setMoving(id, MOVING::TRUE);
-            Movement::setLookingDirection(id, Enum::Direction::RIGHT);
-
-            #ifdef ENABLE_DEBUG_MODE
-            Debug::print("ID:", id, " Moving to right!");
-            #endif
-        }
-
-        void moveRight(EntityID id, float speed, Enum::Animation anim, Enum::Mature maturity) noexcept
-        {
-            auto& base = Component::bases[id].value();
-            base.sprite.move(sf::Vector2f(speed, 0));
-
-            Animation::setCurrentAnimation(id, sum<int>(anim, maturity));
-            Animation::setAllowPlay(id, ALLOW::TRUE);
 
             Movement::setMoving(id, MOVING::TRUE);
             Movement::setLookingDirection(id, Enum::Direction::RIGHT);
@@ -274,7 +242,6 @@ namespace System
             base.sprite.move(sf::Vector2f(-speed, 0));
 
             Animation::setCurrentAnimation(id, int(anim));
-            Animation::setAllowPlay(id, ALLOW::TRUE);
 
             Movement::setMoving(id, MOVING::TRUE);
             Movement::setLookingDirection(id, Enum::Direction::LEFT);
@@ -284,20 +251,60 @@ namespace System
             #endif
         }
 
-        void moveLeft(EntityID id, float speed, Enum::Animation anim, Enum::Mature maturity) noexcept
+
+        void jump(EntityID id, unsigned int height) noexcept
         {
-            auto& base = Component::bases[id].value();
-            base.sprite.move(sf::Vector2f(-speed, 0));
+            auto& movement = Component::movements[id].value();
+            if(not movement.isJumping && Physics::isOnGround(id)) {
+                Movement::setJumping(id, JUMPING::TRUE);
+                Movement::setMoving(id, MOVING::TRUE);
 
-            Animation::setCurrentAnimation(id, sum<int>(anim, maturity));
-            Animation::setAllowPlay(id, ALLOW::TRUE);
+                auto& physics = Component::physics[id].value();
+                physics.maxJumpHeight = height;
+                physics.jumpClock.restart();
+            }
+        }
+        void jump(EntityID id, unsigned int height, Enum::Animation anim) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            if(not movement.isJumping && Physics::isOnGround(id)) {
+                Movement::setJumping(id, JUMPING::TRUE);
+                Movement::setMoving(id, MOVING::TRUE);
+                
+                auto& physics = Component::physics[id].value();
+                physics.maxJumpHeight = height;
+                physics.jumpClock.restart();
+            }
+        }
 
-            Movement::setMoving(id, MOVING::TRUE);
-            Movement::setLookingDirection(id, Enum::Direction::LEFT);
+        void setMoving(EntityID id, MOVING moving) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            movement.isMoving = bool(moving);
+        }
 
-            #ifdef ENABLE_DEBUG_MODE
-            Debug::print("ID:", id, " Moving to left!");
-            #endif
+        void setRunning(EntityID id, RUNNING running) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            movement.isRunning = int(running);
+        }
+
+        void setJumping(EntityID id, JUMPING jumping) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            movement.isJumping = bool(jumping);
+        }
+
+        void setLookingDirection(EntityID id, Enum::Direction direction) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            movement.lookingDirection = direction;
+        }
+
+        bool getJumping(EntityID id) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            return movement.isJumping;
         }
     } // namespace Movement
 
@@ -309,17 +316,15 @@ namespace System
                 throw std::runtime_error("Failed to access 'map - bases'");
             }
 
+            if(not Component::movements[id].has_value()) {
+                throw std::runtime_error("Failed to access 'map - movements'");
+            }
+
             if(not Component::physics[id].has_value()) {
                 throw std::runtime_error("Failed to access 'map - physics'");
             }
 
             return SUCCESS;
-        }
-
-        void setSpeed(EntityID id, float speed) noexcept
-        {
-            auto& physics = Component::physics[id].value();
-            physics.speed = speed;
         }
 
         bool isMidAir(EntityID id) noexcept
@@ -336,14 +341,16 @@ namespace System
 
         void start(EntityID id) noexcept
         {
-            auto& physics = Component::physics[id].value();
+            auto& physics  = Component::physics[id].value();
+            auto& movement = Component::movements[id].value();
             bool touchingGroundCounter = false;
 
             for(EntityID secondId = 0; secondId < Component::maxIndexes; secondId++) 
             {
-                if(Manager::canAccess(secondId)) {
+                if(Manager::canAccess(secondId)) 
+                {
                     if(secondId != id) {
-                        auto collision = /*Physics*/ checkIntersections(id, secondId);
+                        auto collision = Physics::Helper::checkIntersections(id, secondId);
                         auto& secondType = Component::types[secondId].value(); // throwing
 
                         if(secondType.type == Enum::Type::BLOCK)
@@ -362,60 +369,77 @@ namespace System
                 physics.onGround = false;
             }
 
-            if(not physics.onGround) {
+            if(not physics.onGround && not movement.isJumping) {
                 Component::bases[id] ->sprite.move(0, physics.speed);
+            } else if(movement.isJumping) {
+                #ifdef ENABLE_DEBUG_MODE
+                Debug::print("ID:", id, " - is Jumping!");
+                #endif
+
+                Component::bases[id] ->sprite.move(0, -physics.speed);
+
+                if(sf::Time timer = physics.jumpClock.getElapsedTime();
+                   timer >= sf::milliseconds(physics.maxJumpHeight))
+                {
+                    Movement::setJumping(id, JUMPING::FALSE);
+                    physics.jumpClock.restart();
+                }
             }
         }
 
-        COLLISION checkIntersections(EntityID id, EntityID second_id) noexcept
+        namespace Helper
         {
-            const sf::FloatRect idGlobalBounds  = Component::bases[id]        -> sprite.getGlobalBounds();
-			const sf::FloatRect sidGlobalBounds = Component::bases[second_id] -> sprite.getGlobalBounds();
-		
-			const float idRight   = idGlobalBounds.left  + (idGlobalBounds.width / 2);
-			const float idBottom  = idGlobalBounds.top   + (idGlobalBounds.height / 2);
-			const float sidRight  = sidGlobalBounds.left + (sidGlobalBounds.width / 2);
-			const float sidBottom = sidGlobalBounds.top  + (sidGlobalBounds.height / 2);
+            COLLISION checkIntersections(EntityID id, EntityID second_id) noexcept
+            {
+                const sf::FloatRect idGlobalBounds  = Component::bases[id]        -> sprite.getGlobalBounds();
+                const sf::FloatRect sidGlobalBounds = Component::bases[second_id] -> sprite.getGlobalBounds();
+            
+                const float idRight   = idGlobalBounds.left  + (idGlobalBounds.width / 2);
+                const float idBottom  = idGlobalBounds.top   + (idGlobalBounds.height / 2);
+                const float sidRight  = sidGlobalBounds.left + (sidGlobalBounds.width / 2);
+                const float sidBottom = sidGlobalBounds.top  + (sidGlobalBounds.height / 2);
 
-            if(idGlobalBounds.intersects(sidGlobalBounds)) {
-				std::vector<COLLISION> collisionArray;
-                // only 3 sides possible to touch
-                collisionArray.reserve(3); 
-				
-				// Touching on the top
-				if(sidBottom >= idGlobalBounds.top && idRight >= sidGlobalBounds.left && sidRight >= idGlobalBounds.left) {
-					collisionArray.push_back(COLLISION::TOP);
-				}
+                if(idGlobalBounds.intersects(sidGlobalBounds)) {
+                    std::vector<COLLISION> collisionArray;
+                    // only 3 sides possible to touch
+                    collisionArray.reserve(3); 
+                    
+                    // Touching on the top
+                    if(sidBottom >= idGlobalBounds.top && idRight >= sidGlobalBounds.left && sidRight >= idGlobalBounds.left) {
+                        collisionArray.push_back(COLLISION::TOP);
+                    }
 
-				// Touching on the right
-				if(idRight >= sidGlobalBounds.left && idBottom >= sidGlobalBounds.top && sidBottom >= idGlobalBounds.top) {
-					collisionArray.push_back(COLLISION::RIGHT);
-				}
+                    // Touching on the right
+                    if(idRight >= sidGlobalBounds.left && idBottom >= sidGlobalBounds.top && sidBottom >= idGlobalBounds.top) {
+                        collisionArray.push_back(COLLISION::RIGHT);
+                    }
 
-				// Touching on the left
-				if(sidRight >= idGlobalBounds.left && idBottom >= sidGlobalBounds.top && sidBottom >= idGlobalBounds.top) {
-					collisionArray.push_back(COLLISION::LEFT);
-				}
+                    // Touching on the left
+                    if(sidRight >= idGlobalBounds.left && idBottom >= sidGlobalBounds.top && sidBottom >= idGlobalBounds.top) {
+                        collisionArray.push_back(COLLISION::LEFT);
+                    }
 
-				// Touching on the bottom
-				if(idBottom >= sidGlobalBounds.top && idRight >= sidGlobalBounds.left && sidRight >= idGlobalBounds.left) {
-					collisionArray.push_back(COLLISION::BOTTOM);
-				}
+                    // Touching on the bottom
+                    if(idBottom >= sidGlobalBounds.top && idRight >= sidGlobalBounds.left && sidRight >= idGlobalBounds.left) {
+                        collisionArray.push_back(COLLISION::BOTTOM);
+                    }
 
-				// if hit multiple sides, return top
-				if(collisionArray.size() > 1) {
-					return COLLISION::TOP;
-				} else if(collisionArray.size() != 0) {
-					return collisionArray.at(0); 
-				}
+                    // if hit multiple sides, return top
+                    if(collisionArray.size() > 1) {
+                        return COLLISION::TOP;
+                    } else if(collisionArray.size() != 0) {
+                        return collisionArray.at(0); 
+                    }
 
-                #ifdef ENABLE_DEBUG_MODE
-                Debug::print("ID:", id, " overlapping with ", second_id, '!');
-                #endif
-			}
+                    #ifdef ENABLE_DEBUG_MODE
+                    Debug::print("ID:", id, " overlapping with ", second_id, '!');
+                    #endif
+                }
 
-            return COLLISION::NONE;
-        }
+                return COLLISION::NONE;
+            }
+        } // namespace Helper
+        
     } // namespace Physics
 
 } // namespace System

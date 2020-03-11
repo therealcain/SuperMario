@@ -87,6 +87,7 @@ using ALLOW        = Enum::BOOLEAN;
 using MOVING       = Enum::BOOLEAN;
 using RUNNING      = Enum::BOOLEAN;
 using WITH_PHYSICS = Enum::BOOLEAN;
+using JUMPING      = Enum::BOOLEAN;
 using COLLISION    = Enum::Direction;
     
 #endif

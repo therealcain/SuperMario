@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "../engine/components.hpp"
+#include "../engine/helpers/enums.hpp"
 
 namespace Entity 
 {
@@ -12,7 +13,7 @@ namespace Entity
     
         namespace Helper 
         {
-            void startMovement(EntityID id);   
+            void startMovement(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction);   
         }
     } // namespace Player
 } // namespace Entity
