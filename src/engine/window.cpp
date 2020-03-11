@@ -30,8 +30,8 @@ void Window::display() noexcept {
 void Window::updateCamera(EntityID player_id) noexcept
 {
 	if(Manager::canAccess(player_id)) {
-		const sf::Vector2f objectPosition = Component::bases[player_id] ->sprite.getPosition();
-		const bool& playerRunning 		  = System::Movement::getRunning(player_id);
+		const sf::Vector2f& objectPosition = Component::bases[player_id] ->sprite.getPosition();
+		const bool playerRunning 		   = System::Movement::getRunning(player_id);
 
 		if(System::Movement::getMoving(player_id)) 
 		{	
@@ -40,16 +40,16 @@ void Window::updateCamera(EntityID player_id) noexcept
 				if(System::Movement::getLookingDirection(player_id) == Enum::Direction::RIGHT)
 				{
 					if(playerRunning) {
-						view.move(sf::Vector2f(SHIFTING_SPEED, 0));
+						view.move(sf::Vector2f(SHIFTING_PLAYER_SPEED, 0));
 					} else {
-						view.move(sf::Vector2f(DEFAULT_SPEED, 0));
+						view.move(sf::Vector2f(PLAYER_SPEED, 0));
 					}
 				} else if(System::Movement::getLookingDirection(player_id) == Enum::Direction::LEFT)
 				{
 					if(playerRunning) {
-						view.move(sf::Vector2f(-SHIFTING_SPEED, 0));
+						view.move(sf::Vector2f(-SHIFTING_PLAYER_SPEED, 0));
 					} else {
-						view.move(sf::Vector2f(-DEFAULT_SPEED, 0));
+						view.move(sf::Vector2f(-PLAYER_SPEED, 0));
 					}
 				}
 			}

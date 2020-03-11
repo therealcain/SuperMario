@@ -51,7 +51,7 @@ namespace System
     // ----------- Animation ------------ //
     namespace Movement 
     {
-        bool isPrepared(EntityID id, WITH_PHYSICS with_physics);
+        bool isPrepared(EntityID id);
         Enum::Direction getLookingDirection(EntityID id) noexcept;
         void moveRight(EntityID id, float speed) noexcept;
         void moveRight(EntityID id, float speed, Enum::Animation anim) noexcept;

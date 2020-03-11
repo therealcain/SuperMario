@@ -20,6 +20,7 @@ using AnimationMap    = std::unordered_map<int, AnimationVector>;
 using VariantWhatType = std::variant</* Block Type */     Enum::Block, 
                                      /* Mario Maturity */ Enum::Mature>;
 using OptVarWhatType  = std::optional<VariantWhatType>;
+using OptState        = std::optional<Enum::State>;
 
 namespace Component
 {
@@ -28,6 +29,8 @@ namespace Component
     {
         sf::Texture texture;
         sf::Sprite sprite;
+
+        OptState state;
     };
 
     // ----------- TYPE ---------- //
@@ -73,7 +76,7 @@ namespace Component
     struct Physics
     {
         bool onGround;
-        float speed = DEFAULT_SPEED * 2;
+        float speed = FALL_SPEED;
         unsigned int maxJumpHeight = 400;
 
         sf::Clock jumpClock;

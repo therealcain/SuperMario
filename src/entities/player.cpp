@@ -136,16 +136,16 @@ namespace Entity
         {
             void startMovement(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction)
             {
-                if(System::Movement::isPrepared(id, WITH_PHYSICS::TRUE))
+                if(System::Movement::isPrepared(id))
                 {
                     // if shift is been pressed change the `speed` to running
-                    float speed = DEFAULT_SPEED;
+                    float speed = PLAYER_SPEED;
                     if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-                        speed = SHIFTING_SPEED;
+                        speed = SHIFTING_PLAYER_SPEED;
                     }
 
                     // check whether the player is running or not
-                    bool playerRunning = speed != DEFAULT_SPEED;
+                    bool playerRunning = speed != PLAYER_SPEED;
 
                     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) 
                     {

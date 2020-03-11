@@ -166,7 +166,7 @@ namespace System
 
     namespace Movement
     {
-        bool isPrepared(EntityID id, WITH_PHYSICS with_physics)
+        bool isPrepared(EntityID id)
         {
             if(not Component::bases[id].has_value()) {
                 throw std::runtime_error("Failed to access 'map - bases'");
@@ -180,10 +180,8 @@ namespace System
                 throw std::runtime_error("Failed to access 'map - animations'");
             }
 
-            if(bool(with_physics)) {
-                if(not Component::physics[id].has_value()) {
-                    throw std::runtime_error("Failed to access 'map - physics'");
-                }
+            if(not Component::physics[id].has_value()) {
+                throw std::runtime_error("Failed to access 'map - physics'");
             }
         
             return SUCCESS;

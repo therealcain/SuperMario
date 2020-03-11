@@ -48,6 +48,12 @@ namespace Enum
         QUESTION_MARK
     };
 
+    enum class State {
+        DEAD,
+        DYING,
+        ALIVE
+    };
+
     // ----------- MATURE ----------- //
     // this enum class is going to be multiplied for the animation
     // let's say there is a WALK_RIGHT animation, but how do we know how
@@ -62,12 +68,6 @@ namespace Enum
         ADULT   = int(Animation::END) * 2 // Big white mario that can shoot fire balls
     };
 
-    // ----------- BOOLEAN ---------- //
-    enum class BOOLEAN : bool {
-        TRUE  = true,
-        FALSE = false
-    };
-
     // ----------- DIRECTION ---------- //
     enum class Direction {
         RIGHT,
@@ -75,6 +75,12 @@ namespace Enum
         TOP,
         BOTTOM,
         NONE
+    };
+
+    // ----------- BOOLEAN ---------- //
+    enum class BOOLEAN : bool {
+        TRUE  = true,
+        FALSE = false
     };
     
 } // namespace Enum
@@ -86,7 +92,6 @@ using STOP         = Enum::BOOLEAN;
 using ALLOW        = Enum::BOOLEAN;
 using MOVING       = Enum::BOOLEAN;
 using RUNNING      = Enum::BOOLEAN;
-using WITH_PHYSICS = Enum::BOOLEAN;
 using JUMPING      = Enum::BOOLEAN;
 using COLLISION    = Enum::Direction;
     
