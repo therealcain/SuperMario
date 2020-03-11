@@ -66,6 +66,8 @@ namespace System
         void setLookingDirection(EntityID id, Enum::Direction direction) noexcept;
 
         bool getJumping(EntityID id) noexcept;
+        bool getRunning(EntityID id) noexcept;
+        bool getMoving(EntityID id) noexcept;
     } // namespace Movement
 
     // ----------- Physics ------------ //

@@ -17,6 +17,8 @@
 // ---------------------------------------------------------- //
 // Make sure a type is indeed a std:unordered_map
 // ---------------------------------------------------------- //
+// no usage for it currently
+#if false
 template<typename KEY>
 struct is_unordered_map 
     : std::false_type {};
@@ -24,6 +26,7 @@ struct is_unordered_map
 template<typename KEY, typename VALUE>
 struct is_unordered_map<std::unordered_map<KEY, VALUE>> 
     : std::true_type {};
+#endif
 
 // ---------------------------------------------------------- //
 // Decay and remove the pointer from a type
@@ -41,7 +44,7 @@ using decay_pointer_t = typename decay_pointer<T>::type;
 // Check if type is a string
 // ---------------------------------------------------------- //
 template<typename T>
-struct is_c_str // char*
+struct is_c_str // C char (char*)
 {
     static constexpr bool value = std::is_same_v<decay_pointer_t<T>, char>;
 };

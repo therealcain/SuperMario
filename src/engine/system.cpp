@@ -257,7 +257,6 @@ namespace System
             auto& movement = Component::movements[id].value();
             if(not movement.isJumping && Physics::isOnGround(id)) {
                 Movement::setJumping(id, JUMPING::TRUE);
-                Movement::setMoving(id, MOVING::TRUE);
 
                 auto& physics = Component::physics[id].value();
                 physics.maxJumpHeight = height;
@@ -269,7 +268,6 @@ namespace System
             auto& movement = Component::movements[id].value();
             if(not movement.isJumping && Physics::isOnGround(id)) {
                 Movement::setJumping(id, JUMPING::TRUE);
-                Movement::setMoving(id, MOVING::TRUE);
                 
                 auto& physics = Component::physics[id].value();
                 physics.maxJumpHeight = height;
@@ -303,8 +301,20 @@ namespace System
 
         bool getJumping(EntityID id) noexcept
         {
-            auto& movement = Component::movements[id].value();
+            const auto& movement = Component::movements[id].value();
             return movement.isJumping;
+        }
+
+        bool getRunning(EntityID id) noexcept
+        {
+            const auto& movement = Component::movements[id].value();
+            return movement.isRunning;
+        }
+
+        bool getMoving(EntityID id) noexcept
+        {
+            const auto& movement = Component::movements[id].value();
+            return movement.isMoving;
         }
     } // namespace Movement
 
@@ -329,13 +339,13 @@ namespace System
 
         bool isMidAir(EntityID id) noexcept
         {
-            auto& physics = Component::physics[id].value();
+            const auto& physics = Component::physics[id].value();
             return !physics.onGround;
         }
 
         bool isOnGround(EntityID id) noexcept
         {
-            auto& physics = Component::physics[id].value();
+            const auto& physics = Component::physics[id].value();
             return physics.onGround;
         }
 

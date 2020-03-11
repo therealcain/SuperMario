@@ -116,7 +116,9 @@ namespace Entity
                     }
                 }
                 #endif
-            
+
+                System::Movement::setMoving(id, MOVING::FALSE);
+
                 if(System::Physics::isPrepared(id)) {
                     System::Physics::start(id);
                 }
@@ -139,7 +141,7 @@ namespace Entity
                     // if shift is been pressed change the `speed` to running
                     float speed = DEFAULT_SPEED;
                     if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-                        speed += 1;
+                        speed = SHIFTING_SPEED;
                     }
 
                     // check whether the player is running or not
