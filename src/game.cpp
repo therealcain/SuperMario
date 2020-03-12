@@ -16,6 +16,9 @@ Game::Game()
 	for(size_t i = 1; i < 20; i++) {
 		Entity::Block::create(sf::Vector2f(140 + ( 15 * i), 220), Enum::Block::EMPTY);
 	}
+
+	// Entity::Block::create(sf::Vector2f(220, 160), Enum::Block::EMPTY);
+	Entity::Block::create(sf::Vector2f(220, 205), Enum::Block::EMPTY);
 }
 
 bool Game::run() noexcept {

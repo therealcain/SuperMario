@@ -52,7 +52,6 @@ namespace System
     namespace Movement 
     {
         bool isPrepared(EntityID id);
-        Enum::Direction getLookingDirection(EntityID id) noexcept;
         void moveRight(EntityID id, float speed) noexcept;
         void moveRight(EntityID id, float speed, Enum::Animation anim) noexcept;
         void moveLeft(EntityID id, float speed) noexcept;
@@ -65,6 +64,8 @@ namespace System
         void setJumping(EntityID id, JUMPING jumping) noexcept;
         void setLookingDirection(EntityID id, Enum::Direction direction) noexcept;
 
+        Enum::Direction getLookingDirection(EntityID id) noexcept;
+        Enum::Direction getBlockedDirection(EntityID id) noexcept;
         bool getJumping(EntityID id) noexcept;
         bool getRunning(EntityID id) noexcept;
         bool getMoving(EntityID id) noexcept;

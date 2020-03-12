@@ -187,12 +187,6 @@ namespace System
             return SUCCESS;
         }
 
-        Enum::Direction getLookingDirection(EntityID id) noexcept 
-        {
-            auto& movement = Component::movements[id].value();
-            return movement.lookingDirection;
-        }
-
         void moveRight(EntityID id, float speed) noexcept
         {
             auto& base = Component::bases[id].value();
@@ -273,6 +267,18 @@ namespace System
             }
         }
 
+        void setLookingDirection(EntityID id, Enum::Direction direction) noexcept
+        {
+            auto& movement = Component::movements[id].value();
+            movement.lookingDirection = direction;
+        }
+
+        void setBlockedDirection(EntityID id, Enum::Direction direction) noexcept 
+        {
+            auto& movement = Component::movements[id].value();
+            movement.blockedDirection = direction;
+        }
+
         void setMoving(EntityID id, MOVING moving) noexcept
         {
             auto& movement = Component::movements[id].value();
@@ -291,10 +297,16 @@ namespace System
             movement.isJumping = bool(jumping);
         }
 
-        void setLookingDirection(EntityID id, Enum::Direction direction) noexcept
+        Enum::Direction getLookingDirection(EntityID id) noexcept 
         {
-            auto& movement = Component::movements[id].value();
-            movement.lookingDirection = direction;
+            const auto& movement = Component::movements[id].value();
+            return movement.lookingDirection;
+        }
+
+        Enum::Direction getBlockedDirection(EntityID id) noexcept
+        {
+            const auto& movement = Component::movements[id].value();
+            return movement.blockedDirection;
         }
 
         bool getJumping(EntityID id) noexcept
@@ -351,7 +363,10 @@ namespace System
         {
             auto& physics  = Component::physics[id].value();
             auto& movement = Component::movements[id].value();
-            bool touchingGroundCounter = false;
+            
+            bool touchingGround = false;
+            bool touchingRight  = false;
+            bool touchingLeft   = false;
 
             for(EntityID secondId = 0; secondId < Component::maxIndexes; secondId++) 
             {
@@ -359,22 +374,49 @@ namespace System
                 {
                     if(secondId != id) {
                         auto collision = Physics::Helper::checkIntersections(id, secondId);
-                        auto& secondType = Component::types[secondId].value(); // throwing
+                        auto& secondType = Component::types[secondId].value();
 
                         if(secondType.type == Enum::Type::BLOCK)
                         {
                             if(collision == COLLISION::TOP) {
-                                touchingGroundCounter = true;
+                                touchingGround = true;
                             } 
-                        }
+                            else if(collision == COLLISION::BOTTOM) {
+                                Movement::setJumping(id, JUMPING::FALSE);
+                            }
+                            else if(collision == COLLISION::RIGHT) {
+                                touchingRight = true;
+                                touchingLeft  = false;
+                            }
+                            else if(collision == COLLISION::LEFT) {
+                                touchingRight = false;
+                                touchingLeft  = true;
+                            } 
+                        } 
                     }
                 }
             }
 
-            if(touchingGroundCounter) {
+            if(touchingGround) {
                 physics.onGround = true;
             } else {
                 physics.onGround = false;
+            }
+
+            if(touchingRight) {
+                Movement::setBlockedDirection(id, Enum::Direction::RIGHT);
+                
+                #ifdef ENABLE_DEBUG_MODE
+                Debug::print("ID:", id, " - is Touching Right!");
+                #endif
+            } else if(touchingLeft) {
+                Movement::setBlockedDirection(id, Enum::Direction::LEFT);
+                
+                #ifdef ENABLE_DEBUG_MODE
+                Debug::print("ID:", id, " - is Touching Left!");
+                #endif
+            } else {
+                Movement::setBlockedDirection(id, Enum::Direction::NONE);
             }
 
             if(not physics.onGround && not movement.isJumping) {
@@ -440,7 +482,7 @@ namespace System
                     }
 
                     #ifdef ENABLE_DEBUG_MODE
-                    Debug::print("ID:", id, " overlapping with ", second_id, '!');
+                    // Debug::print("ID:", id, " overlapping with ", second_id, '!');
                     #endif
                 }
 

@@ -70,6 +70,7 @@ namespace Component
         bool isJumping = false;
         
         Enum::Direction lookingDirection;
+        Enum::Direction blockedDirection;
     };
 
     // ----------- PHYSICS ---------- //

@@ -48,6 +48,7 @@ namespace Enum
         QUESTION_MARK
     };
 
+    // ----------- STATE ----------- //
     enum class State {
         DEAD,
         DYING,

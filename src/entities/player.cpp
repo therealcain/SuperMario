@@ -190,7 +190,9 @@ namespace Entity
                                 default: break;
                             }
                         }
-                    } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) 
+                    } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && 
+                              System::Movement::getBlockedDirection(id) != Enum::Direction::LEFT) /* make sure the player is not touching the 
+                                                                                                  the left side of the object to prevent overlapping */ 
                     {
                         System::Movement::setLookingDirection(id, Enum::Direction::RIGHT);
                         System::Movement::moveRight(id, speed);
@@ -209,7 +211,9 @@ namespace Entity
                                 System::Animation::setNextAnimationTimer(id, 150);
                             }
                         }
-                    } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) 
+                    } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && 
+                              System::Movement::getBlockedDirection(id) != Enum::Direction::RIGHT) /* make sure the player is not touching the 
+                                                                                                    the right side of the object to prevent overlapping*/ 
                     {
                         System::Movement::setLookingDirection(id, Enum::Direction::LEFT);
                         System::Movement::moveLeft(id, speed);
