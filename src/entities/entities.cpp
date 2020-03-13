@@ -10,7 +10,7 @@ namespace Entity
     // ---------------------------------------------------------- //
     namespace Block
     {
-        void create(const sf::Vector2f&& position, Enum::Block type) noexcept
+        void create(const sf::Vector2f& position, Enum::Block type) noexcept
         {
             EntityID currentID = Manager::create("assets/block.png");
 
@@ -64,7 +64,7 @@ namespace Entity
     // ---------------------------------------------------------- //
     namespace Cloud 
     {
-        void create(sf::Vector2f&& position) noexcept
+        void create(const sf::Vector2f& position) noexcept
         {   
             EntityID currentID = Manager::create("assets/cloud.png");
 
@@ -79,7 +79,7 @@ namespace Entity
     // ---------------------------------------------------------- //
     namespace Coin 
     {
-        void create(sf::Vector2f&& position) noexcept
+        void create(const sf::Vector2f& position) noexcept
         {   
             EntityID currentID = Manager::create("assets/coin.png");
 

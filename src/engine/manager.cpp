@@ -7,7 +7,7 @@
 
 namespace Manager
 {
-    EntityID create(const std::string&& png)
+    EntityID create(const std::string& png)
     {
         EntityID id = Component::maxIndexes;
 

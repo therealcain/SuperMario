@@ -9,7 +9,7 @@
 
 namespace Manager 
 {
-    EntityID create(const std::string&& png);
+    EntityID create(const std::string& png);
     bool canAccess(EntityID id) noexcept;
     void remove(EntityID id) noexcept;
 

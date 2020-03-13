@@ -31,9 +31,9 @@ namespace System
     namespace Animation 
     {
         bool isPrepared(EntityID id);
-        void setFrames(EntityID id, int pos, const AnimationVector&& anims) noexcept;
-        void setFrames(EntityID id, int pos, const sf::IntRect&& anim) noexcept;
-        void addFrame(EntityID id, int pos, const sf::IntRect&& anim) noexcept;
+        void setFrames(EntityID id, int pos, AnimationVector&& anims) noexcept;
+        void setFrames(EntityID id, int pos, const sf::IntRect& anim) noexcept;
+        void addFrame(EntityID id, int pos, const sf::IntRect& anim) noexcept;
         void setCurrentAnimation(EntityID id, int pos) noexcept;
         void setNextAnimationTimer(EntityID id, unsigned int next_animation_timer) noexcept;
         void setStopWhenFinished(EntityID id, STOP stop) noexcept;

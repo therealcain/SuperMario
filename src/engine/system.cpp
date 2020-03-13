@@ -64,19 +64,19 @@ namespace System
             return SUCCESS;
         }
 
-        void setFrames(EntityID id, int pos, const AnimationVector&& anims) noexcept 
+        void setFrames(EntityID id, int pos, AnimationVector&& anims) noexcept 
         {
             auto& animation = Component::animations[id].value();
             animation.animations[pos] = anims;
         }
 
-        void setFrames(EntityID id, int pos, const sf::IntRect&& anim) noexcept 
+        void setFrames(EntityID id, int pos, const sf::IntRect& anim) noexcept 
         {
             auto& animation = Component::animations[id].value();
             animation.animations[pos] = { anim };
         }
 
-        void addFrame(EntityID id, int pos, const sf::IntRect&& anim) noexcept
+        void addFrame(EntityID id, int pos, const sf::IntRect& anim) noexcept
         {
             auto& animation = Component::animations[id].value();
             animation.animations[pos].push_back(anim);

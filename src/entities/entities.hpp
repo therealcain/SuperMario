@@ -9,17 +9,17 @@ namespace Entity
 {
     namespace Block 
     {
-        void create(const sf::Vector2f&& position, Enum::Block type) noexcept;
+        void create(const sf::Vector2f& position, Enum::Block type) noexcept;
     } // namespace Block
 
     namespace Cloud 
     {
-        void create(sf::Vector2f&& position) noexcept;
+        void create(const sf::Vector2f& position) noexcept;
     } // namespace Cloud
 
     namespace Coin 
     {
-        void create(sf::Vector2f&& position) noexcept;
+        void create(const sf::Vector2f& position) noexcept;
     } // namespace Coin
 
 } // namespace Entity

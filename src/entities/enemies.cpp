@@ -10,7 +10,7 @@ namespace Enemy
 {
     namespace Goomba 
     {
-        void create(sf::Vector2f&& position) noexcept
+        void create(const sf::Vector2f& position) noexcept
         {  
             EntityID currentID = Manager::create("assets/goomba.png");
 
@@ -43,7 +43,20 @@ namespace Enemy
 
                 if(System::Movement::isPrepared(id))
                 {
-                    System::Movement::moveLeft(id, ENEMY_SPEED);
+                    const auto blockedDirection = System::Movement::getBlockedDirection(id);
+                    static bool moveLeft = true;
+
+                    if(blockedDirection == Enum::Direction::RIGHT) {
+                        moveLeft = false;
+                    } else if(blockedDirection == Enum::Direction::LEFT) {
+                        moveLeft = true;
+                    }
+
+                    if(moveLeft) {
+                        System::Movement::moveLeft(id, ENEMY_SPEED);
+                    } else {
+                        System::Movement::moveRight(id, ENEMY_SPEED);
+                    }
                 }
 
                 System::Animation::play(id);

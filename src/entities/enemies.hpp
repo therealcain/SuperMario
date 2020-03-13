@@ -7,7 +7,7 @@ namespace Enemy
 {
     namespace Goomba 
     {
-        void create(sf::Vector2f&& position) noexcept;
+        void create(const sf::Vector2f& position) noexcept;
     } // namespace Goomba
 } // namespace Enemy
 
