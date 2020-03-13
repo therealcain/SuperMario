@@ -12,13 +12,14 @@ Game::Game()
 {
 	Entity::Player::create(sf::Vector2f(180, 50), Enum::Mature::TEENAGE); // index 0
 	Enemy::Goomba::create(sf::Vector2f(250, 50));
+	Entity::Coin::create(sf::Vector2f(300, 160));
 
 	for(size_t i = 1; i < 20; i++) {
 		Entity::Block::create(sf::Vector2f(140 + ( 15 * i), 220), Enum::Block::EMPTY);
 	}
 
-	// Entity::Block::create(sf::Vector2f(220, 160), Enum::Block::EMPTY);
-	Entity::Block::create(sf::Vector2f(220, 205), Enum::Block::EMPTY);
+	Entity::Block::create(sf::Vector2f(220, 160), Enum::Block::BRICK);
+	// Entity::Block::create(sf::Vector2f(220, 205), Enum::Block::EMPTY);
 }
 
 bool Game::run() noexcept {

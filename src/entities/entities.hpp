@@ -3,22 +3,23 @@
 
 #include <SFML/Graphics.hpp>
 #include "../engine/components.hpp"
+#include "../engine/manager.hpp"
 
 namespace Entity
 {
     namespace Block 
     {
         void create(const sf::Vector2f&& position, Enum::Block type) noexcept;
-        void hit(EntityID id) noexcept;
     } // namespace Block
 
-    namespace Cloud {
+    namespace Cloud 
+    {
         void create(sf::Vector2f&& position) noexcept;
     } // namespace Cloud
 
-    namespace Coin {
+    namespace Coin 
+    {
         void create(sf::Vector2f&& position) noexcept;
-        inline void hit(EntityID id) noexcept;
     } // namespace Coin
 
 } // namespace Entity

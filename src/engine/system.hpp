@@ -25,7 +25,7 @@ namespace System
     {
         void update(EntityID id) noexcept;
         void updateAll() noexcept;
-    }
+    } // namespace Game
 
     // ----------- Animation ------------ //
     namespace Animation 
@@ -40,6 +40,8 @@ namespace System
         void setAllowPlay(EntityID id, ALLOW allow) noexcept;
         // this function is needed to be called in the update loop
         void play(EntityID id) noexcept;
+
+        bool getAnimationFinished(EntityID id) noexcept;
 
         namespace Helper
         {
@@ -78,6 +80,7 @@ namespace System
         bool isMidAir(EntityID id) noexcept;
         bool isOnGround(EntityID id) noexcept;
         void start(EntityID id) noexcept;
+        void start(EntityID id, IS_PLAYER is_player) noexcept;
 
         namespace Helper
         {

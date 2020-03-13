@@ -105,22 +105,10 @@ namespace Entity
     
             Component::updates[currentID] = [](EntityID id) -> void
             {
-                // just in case whatType doesn't respond well
-                #ifdef ENABLE_DEBUG_MODE
-                {
-                    try{
-                        [[maybe_unused]] const auto maturity = std::get<Enum::Mature>(Component::types[id] ->whatType.value());
-                    }
-                    catch(std::exception& e) {
-                        Debug::print("ID: ", id, " - Failed to access maturity!");
-                    }
-                }
-                #endif
-
                 System::Movement::setMoving(id, MOVING::FALSE);
 
                 if(System::Physics::isPrepared(id)) {
-                    System::Physics::start(id);
+                    System::Physics::start(id, IS_PLAYER::TRUE);
                 }
 
                 // get the maturity from the optional variant

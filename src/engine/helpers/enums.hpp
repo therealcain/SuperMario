@@ -94,6 +94,7 @@ using ALLOW        = Enum::BOOLEAN;
 using MOVING       = Enum::BOOLEAN;
 using RUNNING      = Enum::BOOLEAN;
 using JUMPING      = Enum::BOOLEAN;
+using IS_PLAYER    = Enum::BOOLEAN;
 using COLLISION    = Enum::Direction;
     
 #endif

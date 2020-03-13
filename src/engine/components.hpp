@@ -82,7 +82,6 @@ namespace Component
 
         sf::Clock jumpClock;
     };
-
 } // namespace Component
 
 // ----- Using's ----- //

@@ -56,9 +56,9 @@ namespace Manager
             Component::bases.erase(id);
             Component::types.erase(id);
             Component::animations.erase(id);
-            Component::updates.erase(id);
             Component::movements.erase(id);
             Component::physics.erase(id);
+            Component::updates.erase(id);
 
             #ifdef ENABLE_DEBUG_MODE
             Debug::print("ID:", id, " Removed!");

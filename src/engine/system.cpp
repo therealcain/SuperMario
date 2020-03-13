@@ -2,6 +2,7 @@
 #include "helpers/values.hpp"
 #include "helpers/functions.hpp"
 #include "manager.hpp"
+#include "../entities/entities.hpp"
 
 #include <exception>
 #include <cmath>
@@ -12,7 +13,7 @@ namespace System
     // ----------- Render ------------ //
     void Render::draw(EntityID id) noexcept 
     {
-        if(Component::bases[id].has_value()) 
+        if(Manager::canAccess(id)) 
         {
             auto& base = Component::bases[id].value();
             m_window.draw(base.sprite);
@@ -31,7 +32,7 @@ namespace System
     {
         void update(EntityID id) noexcept 
         {
-            if(Component::updates[id].has_value())
+            if(Manager::canAccess(id)) 
             {
                 auto& update = Component::updates[id].value();
                 update(id);
@@ -150,6 +151,12 @@ namespace System
                     animation.clock.restart();
                 }
             }
+        }
+
+        bool getAnimationFinished(EntityID id) noexcept
+        {
+            const auto& animation = Component::animations[id].value();
+            return animation.isFinished;
         }
 
         namespace Helper
@@ -361,6 +368,11 @@ namespace System
 
         void start(EntityID id) noexcept
         {
+            Physics::start(id, IS_PLAYER::FALSE);
+        }
+
+        void start(EntityID id, IS_PLAYER is_player) noexcept
+        {
             auto& physics  = Component::physics[id].value();
             auto& movement = Component::movements[id].value();
             
@@ -368,15 +380,17 @@ namespace System
             bool touchingRight  = false;
             bool touchingLeft   = false;
 
-            for(EntityID secondId = 0; secondId < Component::maxIndexes; secondId++) 
-            {
-                if(Manager::canAccess(secondId)) 
-                {
-                    if(secondId != id) {
-                        auto collision = Physics::Helper::checkIntersections(id, secondId);
-                        auto& secondType = Component::types[secondId].value();
+            // auto& playerMaturity = std::get<Enum::Mature>(Component::types[id] ->whatType.value());
 
-                        if(secondType.type == Enum::Type::BLOCK)
+            for(EntityID secondID = 0; secondID < Component::maxIndexes; secondID++) 
+            {
+                if(Manager::canAccess(secondID)) 
+                {
+                    if(secondID != id) {
+                        auto collision = Physics::Helper::checkIntersections(id, secondID);
+                        auto& secondIDType = Component::types[secondID].value();
+
+                        if(secondIDType.type == Enum::Type::BLOCK)
                         {
                             if(collision == COLLISION::TOP) {
                                 touchingGround = true;
@@ -392,7 +406,24 @@ namespace System
                                 touchingRight = false;
                                 touchingLeft  = true;
                             } 
-                        } 
+                        }
+
+                        if(bool(is_player))
+                        {
+                            // touching coin
+                            if(secondIDType.type == Enum::Type::COIN) {
+                                if(collision != COLLISION::NONE) {
+                                    Manager::remove(secondID);
+                                }
+                            }
+
+                            // touching block
+                            else if(secondIDType.type == Enum::Type::BLOCK) {
+                                if(collision == COLLISION::BOTTOM) {
+                                    Animation::setAllowPlay(secondID, ALLOW::TRUE);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -480,10 +511,6 @@ namespace System
                     } else if(collisionArray.size() != 0) {
                         return collisionArray.at(0); 
                     }
-
-                    #ifdef ENABLE_DEBUG_MODE
-                    // Debug::print("ID:", id, " overlapping with ", second_id, '!');
-                    #endif
                 }
 
                 return COLLISION::NONE;

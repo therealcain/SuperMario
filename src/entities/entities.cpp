@@ -1,6 +1,4 @@
 #include "entities.hpp"
-
-#include "../engine/manager.hpp"
 #include "../engine/system.hpp"
 
 #include <iostream>
@@ -58,20 +56,14 @@ namespace Entity
                 System::Animation::play(id);
             };
         }   
-
-        void hit(EntityID id) noexcept 
-        {
-            if(Manager::canAccess(id)) {
-                System::Animation::setAllowPlay(id, ALLOW::TRUE);
-            } 
-        }
     } // namespace Block
 
 
     // ---------------------------------------------------------- //
     // -------------------------- CLOUD ------------------------- //
     // ---------------------------------------------------------- //
-    namespace Cloud {
+    namespace Cloud 
+    {
         void create(sf::Vector2f&& position) noexcept
         {   
             EntityID currentID = Manager::create("assets/cloud.png");
@@ -85,7 +77,8 @@ namespace Entity
     // ---------------------------------------------------------- //
     // -------------------------- COIN -------------------------- //
     // ---------------------------------------------------------- //
-    namespace Coin {
+    namespace Coin 
+    {
         void create(sf::Vector2f&& position) noexcept
         {   
             EntityID currentID = Manager::create("assets/coin.png");
@@ -116,11 +109,6 @@ namespace Entity
             Component::updates[currentID] = [](EntityID id) {
                 System::Animation::play(id);
             };
-        }
-
-        inline void hit(EntityID id) noexcept
-        {
-            Manager::remove(id);
         }
     } // namespace Coin
 
