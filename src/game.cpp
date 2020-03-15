@@ -10,8 +10,7 @@
 Game::Game() 
 	: render(Window::window)
 {
-	Entity::Player::create(sf::Vector2f(180, 50), Enum::Mature::CHILD); // index 0
-	Enemy::Goomba::create(sf::Vector2f(280, 50));
+	Entity::Player::create(sf::Vector2f(180, 50), Enum::Mature::TEENAGE); // index 0
 	Entity::Coin::create(sf::Vector2f(300, 160));
 
 	for(size_t i = 1; i < 20; i++) {

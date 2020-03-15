@@ -39,14 +39,14 @@ namespace Manager
         // if it doesn't have any value, the other 
         // components will not respond well.
         if(Component::bases[id].has_value()) {
-            return SUCCESS;
+            return true;
         }
         
         #ifdef ENABLE_DEBUG_MODE
         Debug::print("ID:", id, " - Cannot be accessed!");
         #endif
 
-        return FAILED;
+        return false;
     }
 
     void remove(EntityID id) noexcept 

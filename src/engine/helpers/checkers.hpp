@@ -93,5 +93,23 @@ struct is_component {
 template<typename T>
 constexpr bool is_component_v = is_component<T>::value;
 
+// ---------------------------------------------------------- //
+// Check if value is null pointer
+// ---------------------------------------------------------- //
+template<typename T>
+constexpr bool is_null(const T* val) noexcept
+{
+    return val == nullptr;
+}
+
+template<typename T>
+T& throw_if_null(T* val) 
+{
+    if(is_null(val)) {
+        throw std::runtime_error("Value is null pointer!");
+    }
+
+    return *val;
+}
 
 #endif

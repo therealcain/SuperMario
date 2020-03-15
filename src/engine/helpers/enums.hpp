@@ -67,6 +67,7 @@ namespace Enum
         CHILD   = 0,
         TEENAGE = int(Animation::END),    // Big red mario
         ADULT   = int(Animation::END) * 2 // Big white mario that can shoot fire balls
+                                          // White mario is the same as Teenage but with Color Manipulation
     };
 
     // ----------- DIRECTION ---------- //
@@ -88,13 +89,16 @@ namespace Enum
 
 
 // ----- Using's ----- //
-using BE_NULL      = Enum::BOOLEAN;
-using STOP         = Enum::BOOLEAN;
-using ALLOW        = Enum::BOOLEAN;
-using MOVING       = Enum::BOOLEAN;
-using RUNNING      = Enum::BOOLEAN;
-using JUMPING      = Enum::BOOLEAN;
-using IS_PLAYER    = Enum::BOOLEAN;
-using COLLISION    = Enum::Direction;
+using BE_NULL       = Enum::BOOLEAN;
+using STOP          = Enum::BOOLEAN;
+using ALLOW         = Enum::BOOLEAN;
+using MOVING        = Enum::BOOLEAN;
+using RUNNING       = Enum::BOOLEAN;
+using JUMPING       = Enum::BOOLEAN;
+using FORCE         = Enum::BOOLEAN;
+using WAIT_FOR_ANIM = Enum::BOOLEAN;
+using STARTED       = Enum::BOOLEAN;
+using FINISHED      = Enum::BOOLEAN;
+using COLLISION     = Enum::Direction;
     
 #endif

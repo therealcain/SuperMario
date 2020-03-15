@@ -12,6 +12,13 @@
 #include "helpers/enums.hpp"
 #include "helpers/values.hpp"
 
+// if the project is being compiled with the MSVC compiler make sure
+// not to generate any errors about 'not' because it's not in the 
+// MSVC compiler.
+#if _MSC_VER
+#define not !
+#endif
+
 // ----- Using's ------ //
 using EntityID = long unsigned int; // similar to size_t
 
@@ -51,10 +58,10 @@ namespace Component
         int currentAnimation = -100;
         int currentFrame;
 
-        bool isFinished = false;
-        bool isStarted  = false;
+        bool isFinished       = false;
+        bool isStarted        = false;
         bool stopWhenFinished = false;
-        bool allowPlay = true;
+        bool allowPlay        = true;
 
         AnimationMap animations;
     };

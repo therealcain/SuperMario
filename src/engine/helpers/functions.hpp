@@ -13,6 +13,8 @@
 #include <type_traits>
 #include <stdexcept>
 
+#include <SFML/Graphics.hpp>
+
 #include "checkers.hpp"
 
 #ifdef ENABLE_DEBUG_MODE

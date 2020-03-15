@@ -13,7 +13,20 @@ namespace Entity
     
         namespace Helper 
         {
+            void setupAnimation(EntityID id) noexcept;
+            void setupUpdateFunction(EntityID id) noexcept;
+            
             void startMovement(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction);   
+            void checkJump(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction) noexcept;
+            bool checkCrouch(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction) noexcept;
+            bool checkMovementRight(EntityID id, float speed, Enum::Mature maturity, Enum::Direction looking_direction) noexcept;
+            bool checkMovementLeft(EntityID id, float speed, Enum::Mature maturity, Enum::Direction looking_direction) noexcept;
+            void IDLE(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction);
+            
+            float checkSpeed() noexcept;
+            bool checkPlayerRunning(float speed) noexcept;
+
+            sf::Texture changeMarioRednessColor(sf::Texture texture, const sf::Color& color) noexcept;
         }
     } // namespace Player
 } // namespace Entity

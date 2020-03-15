@@ -44,7 +44,28 @@ namespace System
             for(size_t i = 0; i < Component::updates.size(); i++) {
                 Game::update(i);
             }
+
+            /* first  = EntityID
+               second = waiting for animation*/
+            for(auto& i : Helper::removeableIDS) {
+                if(Manager::canAccess(i.first)) {
+                    if(i.second == true) {
+                        if(Animation::getAnimationFinished(i.first) == true) {
+                            Manager::remove(i.first);
+                        }
+                    } else {
+                        Manager::remove(i.first);
+                    }
+                }
+            }
         }
+
+        namespace Helper 
+        {
+            void removeID(EntityID id, WAIT_FOR_ANIM wait_for_anim) noexcept {
+                removeableIDS.push_back( std::make_pair(id, bool(wait_for_anim)) );
+            }
+        } // namespace Helper
     } // namespace Game
 
 
@@ -61,10 +82,10 @@ namespace System
                 throw std::runtime_error("Failed to access 'map - bases'");
             }
 
-            return SUCCESS;
+            return true;
         }
 
-        void setFrames(EntityID id, int pos, AnimationVector&& anims) noexcept 
+        void setFrames(EntityID id, int pos, const AnimationVector& anims) noexcept 
         {
             auto& animation = Component::animations[id].value();
             animation.animations[pos] = anims;
@@ -89,11 +110,14 @@ namespace System
             // make sure position exists
             if(animation.animations.find(pos) != animation.animations.end()) { 
                 if(pos != animation.currentAnimation) {
-                    animation.currentAnimation = pos;            
+                    Animation::setStarted(id, STARTED::FALSE);
+                    Animation::setFinished(id, FINISHED::FALSE);
+
+                    animation.currentAnimation = pos;
 
                     // Set the first frame to sprite
                     auto& base = Component::bases[id].value();
-                    base.sprite.setTextureRect(animation.animations[pos][0]); 
+                    base.sprite.setTextureRect(animation.animations[pos][0]);
                 }
             }
             #ifdef ENABLE_DEBUG_MODE
@@ -121,6 +145,18 @@ namespace System
             animation.allowPlay = bool(allow);
         }
 
+        void setStarted(EntityID id, STARTED started) noexcept
+        {
+            auto& animation = Component::animations[id].value();
+            animation.isStarted = bool(started);
+        }
+
+        void setFinished(EntityID id, FINISHED finished) noexcept
+        {
+            auto& animation = Component::animations[id].value();
+            animation.isFinished = bool(finished);
+        }
+
         void play(EntityID id) noexcept 
         {
             auto& animation = Component::animations[id].value();
@@ -129,14 +165,14 @@ namespace System
             if(animation.allowPlay)
             {
                 const int maxFrames = animation.animations[animation.currentAnimation].size();
-                animation.isStarted = true;
+                Animation::setStarted(id, STARTED::TRUE);
 
                 if(sf::Time timer = animation.clock.getElapsedTime();
                     timer >= sf::milliseconds(animation.nextFrameTimer))
                 {
                     if(animation.currentFrame >= maxFrames) {
                         animation.currentFrame = 0;
-                        animation.isFinished = true;
+                        Animation::setFinished(id, FINISHED::TRUE);
                     }
 
                     // get out of the function before setting a different frame
@@ -159,9 +195,19 @@ namespace System
             return animation.isFinished;
         }
 
+        const AnimationVector* getFrames(EntityID id, int pos) noexcept
+        {
+            const auto& animation = Component::animations[id].value();
+            if(animation.animations.find(pos) != animation.animations.end()) { 
+                return &animation.animations.at(pos);
+            }
+
+            return nullptr;
+        }
+
         namespace Helper
         {
-            sf::IntRect extractTextureRect(const sf::IntRect&& rect) noexcept 
+            sf::IntRect extractTextureRect(const sf::IntRect& rect) noexcept 
             {
                 const int width = std::abs(rect.left - rect.width);
                 const int height = std::abs(rect.top - rect.height);
@@ -191,7 +237,7 @@ namespace System
                 throw std::runtime_error("Failed to access 'map - physics'");
             }
         
-            return SUCCESS;
+            return true;
         }
 
         void moveRight(EntityID id, float speed) noexcept
@@ -251,10 +297,10 @@ namespace System
         }
 
 
-        void jump(EntityID id, unsigned int height) noexcept
+        void jump(EntityID id, unsigned int height, FORCE force) noexcept
         {
             auto& movement = Component::movements[id].value();
-            if(not movement.isJumping && Physics::isOnGround(id)) {
+            if((not movement.isJumping && Physics::isOnGround(id)) || bool(force)) {
                 Movement::setJumping(id, JUMPING::TRUE);
 
                 auto& physics = Component::physics[id].value();
@@ -262,10 +308,10 @@ namespace System
                 physics.jumpClock.restart();
             }
         }
-        void jump(EntityID id, unsigned int height, Enum::Animation anim) noexcept
+        void jump(EntityID id, unsigned int height, Enum::Animation anim, FORCE force) noexcept
         {
             auto& movement = Component::movements[id].value();
-            if(not movement.isJumping && Physics::isOnGround(id)) {
+            if((not movement.isJumping && Physics::isOnGround(id)) || bool(force)) {
                 Movement::setJumping(id, JUMPING::TRUE);
                 
                 auto& physics = Component::physics[id].value();
@@ -351,7 +397,7 @@ namespace System
                 throw std::runtime_error("Failed to access 'map - physics'");
             }
 
-            return SUCCESS;
+            return true;
         }
 
         bool isMidAir(EntityID id) noexcept
@@ -367,11 +413,7 @@ namespace System
         }
 
         void start(EntityID id) noexcept
-        {
-            Physics::start(id, IS_PLAYER::FALSE);
-        }
-
-        void start(EntityID id, IS_PLAYER is_player) noexcept
+            // split this into smaller functions
         {
             auto& physics  = Component::physics[id].value();
             auto& movement = Component::movements[id].value();
@@ -386,8 +428,12 @@ namespace System
             {
                 if(Manager::canAccess(secondID)) 
                 {
-                    if(secondID != id) {
-                        auto collision = Physics::Helper::checkIntersections(id, secondID);
+                    if(secondID != id) 
+                    {
+                        COLLISION collision = Physics::Helper::checkIntersections(id, secondID);
+                        #ifdef ENABLE_DEBUG_MODE
+                        Debug::print("Current ID:", secondID, " Collision:", int(collision));
+                        #endif
                         auto& secondIDType = Component::types[secondID].value();
 
                         if(secondIDType.type == Enum::Type::BLOCK)
@@ -408,20 +454,15 @@ namespace System
                             } 
                         }
 
-                        if(bool(is_player))
+                        if(/*is player*/Component::types[id].value().type == Enum::Type::MARIO)
                         {
-                            // touching coin
-                            if(secondIDType.type == Enum::Type::COIN) {
-                                if(collision != COLLISION::NONE) {
-                                    Manager::remove(secondID);
-                                }
-                            }
-
-                            // touching block
-                            else if(secondIDType.type == Enum::Type::BLOCK) {
-                                if(collision == COLLISION::BOTTOM) {
-                                    Animation::setAllowPlay(secondID, ALLOW::TRUE);
-                                }
+                            auto& type = Component::types[secondID].value().type;
+                            if(type == Enum::Type::COIN) {
+                                Physics::Helper::checkTouchedCoin(secondID, collision);
+                            } else if(type == Enum::Type::BLOCK) {
+                                Physics::Helper::checkTouchedBlock(secondID, collision);
+                            } else if(type == Enum::Type::GOOMBA) {
+                                Physics::Helper::checkTouchedGoomba(id, secondID, collision);
                             }
                         }
                     }
@@ -514,6 +555,33 @@ namespace System
                 }
 
                 return COLLISION::NONE;
+            }
+
+            void checkTouchedCoin(EntityID second_id, COLLISION collision)
+            {
+                if(collision != COLLISION::NONE) {
+                    Game::Helper::removeID(second_id, WAIT_FOR_ANIM::FALSE);
+                }
+            }
+
+            void checkTouchedBlock(EntityID second_id, COLLISION collision)
+            {
+                if(collision == COLLISION::BOTTOM) {
+                    Animation::setAllowPlay(second_id, ALLOW::TRUE);
+                }
+            }
+
+            void checkTouchedGoomba(EntityID id, EntityID second_id, COLLISION collision)
+            {
+                if(collision == COLLISION::TOP) {
+                    Animation::setCurrentAnimation(second_id, int(Enum::Animation::DEAD));
+                    Game::Helper::removeID(second_id, WAIT_FOR_ANIM::TRUE);
+                    Movement::jump(id, PLAYER_KILL, FORCE::TRUE);
+                } else {
+                    #ifndef ENABLE_DEBUG_MODE
+                    Debug::print("player touched in a place he shouldn't on enemy!");
+                    #endif
+                }
             }
         } // namespace Helper
         
