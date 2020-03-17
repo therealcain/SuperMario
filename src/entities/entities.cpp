@@ -18,15 +18,22 @@ namespace Entity
             Component::types[currentID] -> type     = Enum::Type::BLOCK;
             Component::types[currentID] -> whatType = type;
 
-            Manager::addComponent<Component::Animation>(currentID, BE_NULL::FALSE);
-            if(System::Animation::isPrepared(currentID)) {
+            Block::Helper::setupAnimations(currentID, type);
+            Block::Helper::setupUpdateFunction(currentID);
+        }   
+
+        namespace Helper
+        {
+            void setupAnimations(EntityID id, Enum::Block type) noexcept
+            {
+                Manager::addComponent<Component::Animation>(id, BE_NULL::FALSE);
                 switch(type) {
                     case Enum::Block::EMPTY:
-                        System::Animation::setFrames(currentID, int(Enum::Block::EMPTY), sf::IntRect(64, 0, 16, 16));
+                        System::Animation::setFrames(id, int(Enum::Block::EMPTY), sf::IntRect(64, 0, 16, 16));
                     break;
 
                     case Enum::Block::BRICK:
-                        System::Animation::setFrames(currentID, int(Enum::Block::BRICK), {
+                        System::Animation::setFrames(id, int(Enum::Block::BRICK), {
                             sf::IntRect(0, 16, 16, 16),
                             sf::IntRect(32, 0, 16, 16),
                             sf::IntRect(48, 0, 16, 16),
@@ -35,7 +42,7 @@ namespace Entity
                     break;
 
                     case Enum::Block::QUESTION_MARK:
-                        System::Animation::setFrames(currentID, int(Enum::Block::QUESTION_MARK), {
+                        System::Animation::setFrames(id, int(Enum::Block::QUESTION_MARK), {
                             sf::IntRect(16, 0, 16, 16),
                             sf::IntRect(16, 16, 16, 16),
                             sf::IntRect(32, 16, 16, 16),
@@ -44,18 +51,20 @@ namespace Entity
                     break;
                 }
                 
-                System::Animation::setCurrentAnimation(currentID, int(type));
-                System::Animation::setNextAnimationTimer(currentID, 100);
-                System::Animation::setStopWhenFinished(currentID, STOP::TRUE);
-                System::Animation::setAllowPlay(currentID, ALLOW::FALSE);
+                System::Animation::setCurrentAnimation(id, int(type));
+                System::Animation::setNextAnimationTimer(id, 100);
+                System::Animation::setStopWhenFinished(id, true);
+                System::Animation::setAllowPlay(id, false);
             }
 
-        
-            Manager::addComponent<Component::UpdateFunction>(currentID, BE_NULL::FALSE);
-            Component::updates[currentID] = [](EntityID id) {
-                System::Animation::play(id);
-            };
-        }   
+            void setupUpdateFunction(EntityID id) noexcept
+            {
+                Manager::addComponent<Component::UpdateFunction>(id, BE_NULL::FALSE);
+                Component::updates[id] = [](EntityID update_id) -> void {
+                    System::Animation::play(update_id);
+                };
+            }
+        } // namespace Helper
     } // namespace Block
 
 
@@ -86,11 +95,18 @@ namespace Entity
             Component::bases[currentID] -> sprite.setPosition(position);
             Component::types[currentID] -> type = Enum::Type::COIN;
 
-            Manager::addComponent<Component::Animation>(currentID, BE_NULL::FALSE);
-            if(System::Animation::isPrepared(currentID)) {
+            Coin::Helper::setupAnimations(currentID);
+            Coin::Helper::setupUpdateFunction(currentID);
+        }
+
+        namespace Helper
+        {
+            void setupAnimations(EntityID id) noexcept
+            {
+                Manager::addComponent<Component::Animation>(id, BE_NULL::FALSE);
                 static constexpr int animPos = 0;
                 
-                System::Animation::setFrames(currentID, animPos, {
+                System::Animation::setFrames(id, animPos, {
                     sf::IntRect(0, 0, 10, 14),
                     sf::IntRect(16, 0, 10, 14),
                     sf::IntRect(32, 0, 10, 14),
@@ -101,15 +117,18 @@ namespace Entity
                     sf::IntRect(53, 15, 1, 16)
                 });
 
-                System::Animation::setNextAnimationTimer(currentID, 100);
-                System::Animation::setCurrentAnimation(currentID, animPos);
+                System::Animation::setNextAnimationTimer(id, 100);
+                System::Animation::setCurrentAnimation(id, animPos);
             }
 
-            Manager::addComponent<Component::UpdateFunction>(currentID, BE_NULL::FALSE);
-            Component::updates[currentID] = [](EntityID id) {
-                System::Animation::play(id);
-            };
-        }
+            void setupUpdateFunction(EntityID id) noexcept
+            {
+                Manager::addComponent<Component::UpdateFunction>(id, BE_NULL::FALSE);
+                Component::updates[id] = [](EntityID update_id) -> void {
+                    System::Animation::play(update_id);
+                };
+            }
+        } // namespace Helper
     } // namespace Coin
 
 } // namespace Entity

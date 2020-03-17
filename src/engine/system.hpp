@@ -36,7 +36,6 @@ namespace System
     // ----------- Animation ------------ //
     namespace Animation 
     {
-        bool isPrepared(EntityID id);
         // this function is needed to be called in the update loop
         void play(EntityID id) noexcept;
 
@@ -45,10 +44,10 @@ namespace System
         void setNextAnimationTimer(EntityID id, unsigned int next_animation_timer) noexcept;
         void setFrames(EntityID id, int pos, const AnimationVector& anims) noexcept;
         void setFrames(EntityID id, int pos, const sf::IntRect& anim) noexcept;
-        void setStopWhenFinished(EntityID id, STOP stop) noexcept;
-        void setAllowPlay(EntityID id, ALLOW allow) noexcept;
-        void setStarted(EntityID id, STARTED started) noexcept;
-        void setFinished(EntityID id, FINISHED finished) noexcept;
+        void setStopWhenFinished(EntityID id, bool stop) noexcept;
+        void setAllowPlay(EntityID id, bool allow) noexcept;
+        void setStarted(EntityID id, bool started) noexcept;
+        void setFinished(EntityID id, bool finished) noexcept;
 
         bool getAnimationFinished(EntityID id) noexcept;
         const AnimationVector* getFrames(EntityID id, int pos) noexcept;
@@ -63,17 +62,16 @@ namespace System
     // ----------- Animation ------------ //
     namespace Movement 
     {
-        bool isPrepared(EntityID id);
         void moveRight(EntityID id, float speed) noexcept;
         void moveRight(EntityID id, float speed, Enum::Animation anim) noexcept;
         void moveLeft(EntityID id, float speed) noexcept;
         void moveLeft(EntityID id, float speed, Enum::Animation anim) noexcept;
-        void jump(EntityID id, unsigned int height, FORCE force) noexcept;
-        void jump(EntityID id, unsigned int height, Enum::Animation anim, FORCE force) noexcept;
+        void jump(EntityID id, unsigned int height, FORCE force);
+        void jump(EntityID id, unsigned int height, Enum::Animation anim, FORCE force);
 
-        void setMoving(EntityID id, MOVING moving) noexcept;
-        void setRunning(EntityID id, RUNNING running) noexcept;
-        void setJumping(EntityID id, JUMPING jumping) noexcept;
+        void setMoving(EntityID id, bool moving) noexcept;
+        void setRunning(EntityID id, bool running) noexcept;
+        void setJumping(EntityID id, bool jumping) noexcept;
         void setLookingDirection(EntityID id, Enum::Direction direction) noexcept;
 
         Enum::Direction getLookingDirection(EntityID id) noexcept;
@@ -86,10 +84,14 @@ namespace System
     // ----------- Physics ------------ //
     namespace Physics
     {
-        bool isPrepared(EntityID id);
-        bool isMidAir(EntityID id) noexcept;
-        bool isOnGround(EntityID id) noexcept;
         void start(EntityID id) noexcept;
+
+        bool isMidAir(EntityID id) noexcept;
+        bool getOnGround(EntityID id) noexcept;
+        float getSpeed(EntityID id) noexcept;
+        unsigned int getMaxJumpHeight(EntityID id) noexcept;
+
+        void setOnGround(EntityID id, bool on_ground) noexcept;
 
         namespace Helper
         {

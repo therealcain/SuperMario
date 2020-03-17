@@ -24,8 +24,10 @@ using EntityID = long unsigned int; // similar to size_t
 
 using AnimationVector = std::vector<sf::IntRect>;
 using AnimationMap    = std::unordered_map<int, AnimationVector>;
+using PairIsPlayerID  = std::pair<IS_PLAYER, std::optional<EntityID>>;
 using VariantWhatType = std::variant</* Block Type */     Enum::Block, 
-                                     /* Mario Maturity */ Enum::Mature>;
+                                     /* Mario Maturity */ Enum::Mature,
+                                     /* Mario/Enemy+ID */ PairIsPlayerID>;
 using OptVarWhatType  = std::optional<VariantWhatType>;
 using OptState        = std::optional<Enum::State>;
 

@@ -47,13 +47,17 @@ namespace System
 
             /* first  = EntityID
                second = waiting for animation*/
-            for(auto& i : Helper::removeableIDS) {
-                if(Manager::canAccess(i.first)) {
-                    if(i.second == true) {
+            for(auto& i : Helper::removeableIDS) 
+            {
+                if(Manager::canAccess(i.first)) 
+                {
+                    if(i.second == true) 
+                    {
                         if(Animation::getAnimationFinished(i.first) == true) {
                             Manager::remove(i.first);
                         }
-                    } else {
+                    } 
+                    else {
                         Manager::remove(i.first);
                     }
                 }
@@ -72,19 +76,6 @@ namespace System
     // ----------- Animation ------------ //
     namespace Animation 
     {
-        bool isPrepared(EntityID id)
-        {
-            if(not Component::animations[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - animations'");
-            }
-
-            if(not Component::bases[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - bases'");
-            }
-
-            return true;
-        }
-
         void setFrames(EntityID id, int pos, const AnimationVector& anims) noexcept 
         {
             auto& animation = Component::animations[id].value();
@@ -108,10 +99,12 @@ namespace System
             auto& animation = Component::animations[id].value();
             
             // make sure position exists
-            if(animation.animations.find(pos) != animation.animations.end()) { 
-                if(pos != animation.currentAnimation) {
-                    Animation::setStarted(id, STARTED::FALSE);
-                    Animation::setFinished(id, FINISHED::FALSE);
+            if(animation.animations.find(pos) != animation.animations.end()) 
+            { 
+                if(pos != animation.currentAnimation) 
+                {
+                    Animation::setStarted(id, false);
+                    Animation::setFinished(id, false);
 
                     animation.currentAnimation = pos;
 
@@ -122,7 +115,7 @@ namespace System
             }
             #ifdef ENABLE_DEBUG_MODE
             else {
-                Debug::printAndThrow("ID:", id, " - position is not existed!");
+                std::cerr << "ID:" << id << " Position is not exist!" << std::endl;
             }
             #endif
         }
@@ -133,28 +126,28 @@ namespace System
             animation.nextFrameTimer = next_animation_timer;
         }
 
-        void setStopWhenFinished(EntityID id, STOP stop = STOP::FALSE) noexcept
+        void setStopWhenFinished(EntityID id, bool stop) noexcept
         {
             auto& animation = Component::animations[id].value();
-            animation.stopWhenFinished = bool(stop);
+            animation.stopWhenFinished = stop;
         }
 
-        void setAllowPlay(EntityID id, ALLOW allow = ALLOW::TRUE) noexcept
+        void setAllowPlay(EntityID id, bool allow) noexcept
         {
             auto& animation = Component::animations[id].value();
-            animation.allowPlay = bool(allow);
+            animation.allowPlay = allow;
         }
 
-        void setStarted(EntityID id, STARTED started) noexcept
+        void setStarted(EntityID id, bool started) noexcept
         {
             auto& animation = Component::animations[id].value();
-            animation.isStarted = bool(started);
+            animation.isStarted = started;
         }
 
-        void setFinished(EntityID id, FINISHED finished) noexcept
+        void setFinished(EntityID id, bool finished) noexcept
         {
             auto& animation = Component::animations[id].value();
-            animation.isFinished = bool(finished);
+            animation.isFinished = finished;
         }
 
         void play(EntityID id) noexcept 
@@ -165,14 +158,15 @@ namespace System
             if(animation.allowPlay)
             {
                 const int maxFrames = animation.animations[animation.currentAnimation].size();
-                Animation::setStarted(id, STARTED::TRUE);
+                Animation::setStarted(id, true);
 
                 if(sf::Time timer = animation.clock.getElapsedTime();
                     timer >= sf::milliseconds(animation.nextFrameTimer))
                 {
-                    if(animation.currentFrame >= maxFrames) {
+                    if(animation.currentFrame >= maxFrames) 
+                    {
                         animation.currentFrame = 0;
-                        Animation::setFinished(id, FINISHED::TRUE);
+                        Animation::setFinished(id, true);
                     }
 
                     // get out of the function before setting a different frame
@@ -219,38 +213,13 @@ namespace System
 
     namespace Movement
     {
-        bool isPrepared(EntityID id)
-        {
-            if(not Component::bases[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - bases'");
-            }
-
-            if(not Component::movements[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - movements'");
-            }
-
-            if(not Component::animations[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - animations'");
-            }
-
-            if(not Component::physics[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - physics'");
-            }
-        
-            return true;
-        }
-
         void moveRight(EntityID id, float speed) noexcept
         {
             auto& base = Component::bases[id].value();
             base.sprite.move(sf::Vector2f(speed, 0));
             
-            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setMoving(id, true);
             Movement::setLookingDirection(id, Enum::Direction::RIGHT);
-
-            #ifdef ENABLE_DEBUG_MODE
-            Debug::print("ID:", id, " Moving to right!");
-            #endif
         }
 
         void moveRight(EntityID id, float speed, Enum::Animation anim) noexcept
@@ -260,12 +229,8 @@ namespace System
 
             Animation::setCurrentAnimation(id, int(anim));
 
-            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setMoving(id, true);
             Movement::setLookingDirection(id, Enum::Direction::RIGHT);
-
-            #ifdef ENABLE_DEBUG_MODE
-            Debug::print("ID:", id, " Moving to right!");
-            #endif
         }
 
         void moveLeft(EntityID id, float speed) noexcept
@@ -273,12 +238,8 @@ namespace System
             auto& base = Component::bases[id].value();
             base.sprite.move(sf::Vector2f(-speed, 0));
 
-            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setMoving(id, true);
             Movement::setLookingDirection(id, Enum::Direction::LEFT);
-
-            #ifdef ENABLE_DEBUG_MODE
-            Debug::print("ID:", id, " Moving to left!");
-            #endif
         }
 
         void moveLeft(EntityID id, float speed, Enum::Animation anim) noexcept
@@ -288,31 +249,42 @@ namespace System
 
             Animation::setCurrentAnimation(id, int(anim));
 
-            Movement::setMoving(id, MOVING::TRUE);
+            Movement::setMoving(id, true);
             Movement::setLookingDirection(id, Enum::Direction::LEFT);
-
-            #ifdef ENABLE_DEBUG_MODE
-            Debug::print("ID:", id, " Moving to left!");
-            #endif
         }
 
 
-        void jump(EntityID id, unsigned int height, FORCE force) noexcept
+        void jump(EntityID id, unsigned int height, FORCE force)
         {
+            #ifdef ENABLE_DEBUG_MODE
+            if(not Component::physics[id].has_value()) {
+                throw std::runtime_error("Please add physics component to enable jumping!");
+            }
+            #endif
+
             auto& movement = Component::movements[id].value();
-            if((not movement.isJumping && Physics::isOnGround(id)) || bool(force)) {
-                Movement::setJumping(id, JUMPING::TRUE);
+            if((not movement.isJumping && Physics::getOnGround(id)) || bool(force)) 
+            {
+                Movement::setJumping(id, true);
 
                 auto& physics = Component::physics[id].value();
                 physics.maxJumpHeight = height;
                 physics.jumpClock.restart();
             }
         }
-        void jump(EntityID id, unsigned int height, Enum::Animation anim, FORCE force) noexcept
+
+        void jump(EntityID id, unsigned int height, Enum::Animation anim, FORCE force)
         {
+            #ifdef ENABLE_DEBUG_MODE
+            if(not Component::physics[id].has_value()) {
+                throw std::runtime_error("Please add physics component to enable jumping!");
+            }
+            #endif
+
             auto& movement = Component::movements[id].value();
-            if((not movement.isJumping && Physics::isOnGround(id)) || bool(force)) {
-                Movement::setJumping(id, JUMPING::TRUE);
+            if((not movement.isJumping && Physics::getOnGround(id)) || bool(force)) 
+            {
+                Movement::setJumping(id, true);
                 
                 auto& physics = Component::physics[id].value();
                 physics.maxJumpHeight = height;
@@ -332,22 +304,22 @@ namespace System
             movement.blockedDirection = direction;
         }
 
-        void setMoving(EntityID id, MOVING moving) noexcept
+        void setMoving(EntityID id, bool moving) noexcept
         {
             auto& movement = Component::movements[id].value();
-            movement.isMoving = bool(moving);
+            movement.isMoving = moving;
         }
 
-        void setRunning(EntityID id, RUNNING running) noexcept
+        void setRunning(EntityID id, bool running) noexcept
         {
             auto& movement = Component::movements[id].value();
-            movement.isRunning = int(running);
+            movement.isRunning = running;
         }
 
-        void setJumping(EntityID id, JUMPING jumping) noexcept
+        void setJumping(EntityID id, bool jumping) noexcept
         {
             auto& movement = Component::movements[id].value();
-            movement.isJumping = bool(jumping);
+            movement.isJumping = jumping;
         }
 
         Enum::Direction getLookingDirection(EntityID id) noexcept 
@@ -383,44 +355,13 @@ namespace System
 
     namespace Physics
     {
-        bool isPrepared(EntityID id)
-        {
-            if(not Component::bases[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - bases'");
-            }
-
-            if(not Component::movements[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - movements'");
-            }
-
-            if(not Component::physics[id].has_value()) {
-                throw std::runtime_error("Failed to access 'map - physics'");
-            }
-
-            return true;
-        }
-
-        bool isMidAir(EntityID id) noexcept
-        {
-            const auto& physics = Component::physics[id].value();
-            return !physics.onGround;
-        }
-
-        bool isOnGround(EntityID id) noexcept
-        {
-            const auto& physics = Component::physics[id].value();
-            return physics.onGround;
-        }
-
         void start(EntityID id) noexcept
             // split this into smaller functions
         {
             auto& physics  = Component::physics[id].value();
-            auto& movement = Component::movements[id].value();
             
             bool touchingGround = false;
-            bool touchingRight  = false;
-            bool touchingLeft   = false;
+            Enum::Direction blockedDirection = Enum::Direction::NONE;
 
             // auto& playerMaturity = std::get<Enum::Mature>(Component::types[id] ->whatType.value());
 
@@ -432,25 +373,27 @@ namespace System
                     {
                         COLLISION collision = Physics::Helper::checkIntersections(id, secondID);
                         #ifdef ENABLE_DEBUG_MODE
-                        Debug::print("Current ID:", secondID, " Collision:", int(collision));
+                        std::cout << "ID:" << secondID << " Collision:" << int(collision) << std::endl;
                         #endif
                         auto& secondIDType = Component::types[secondID].value();
 
                         if(secondIDType.type == Enum::Type::BLOCK)
                         {
-                            if(collision == COLLISION::TOP) {
+                            if(collision == COLLISION::TOP) 
+                            {
                                 touchingGround = true;
+                                blockedDirection = Enum::Direction::TOP;
                             } 
-                            else if(collision == COLLISION::BOTTOM) {
-                                Movement::setJumping(id, JUMPING::FALSE);
+                            else if(collision == COLLISION::BOTTOM) 
+                            {
+                                Movement::setJumping(id, false);
+                                blockedDirection = Enum::Direction::BOTTOM;
                             }
                             else if(collision == COLLISION::RIGHT) {
-                                touchingRight = true;
-                                touchingLeft  = false;
+                                blockedDirection = Enum::Direction::RIGHT;
                             }
                             else if(collision == COLLISION::LEFT) {
-                                touchingRight = false;
-                                touchingLeft  = true;
+                                blockedDirection = Enum::Direction::LEFT;
                             } 
                         }
 
@@ -470,43 +413,59 @@ namespace System
             }
 
             if(touchingGround) {
-                physics.onGround = true;
+                Physics::setOnGround(id, true);
             } else {
-                physics.onGround = false;
+                Physics::setOnGround(id, false);
             }
 
-            if(touchingRight) {
-                Movement::setBlockedDirection(id, Enum::Direction::RIGHT);
-                
-                #ifdef ENABLE_DEBUG_MODE
-                Debug::print("ID:", id, " - is Touching Right!");
-                #endif
-            } else if(touchingLeft) {
-                Movement::setBlockedDirection(id, Enum::Direction::LEFT);
-                
-                #ifdef ENABLE_DEBUG_MODE
-                Debug::print("ID:", id, " - is Touching Left!");
-                #endif
-            } else {
-                Movement::setBlockedDirection(id, Enum::Direction::NONE);
-            }
+            Movement::setBlockedDirection(id, blockedDirection);
 
-            if(not physics.onGround && not movement.isJumping) {
-                Component::bases[id] ->sprite.move(0, physics.speed);
-            } else if(movement.isJumping) {
+            if(Physics::isMidAir(id) && not Movement::getJumping(id)) {
+                Component::bases[id] ->sprite.move(0, Physics::getSpeed(id));
+            } else if(Movement::getJumping(id)) {
                 #ifdef ENABLE_DEBUG_MODE
-                Debug::print("ID:", id, " - is Jumping!");
+                std::cout << "ID:" << id << " is jumping!";
                 #endif
 
-                Component::bases[id] ->sprite.move(0, -physics.speed);
+                Component::bases[id] ->sprite.move(0, Physics::getSpeed(id) * -1);
 
                 if(sf::Time timer = physics.jumpClock.getElapsedTime();
-                   timer >= sf::milliseconds(physics.maxJumpHeight))
+                   timer >= sf::milliseconds(Physics::getMaxJumpHeight(id)))
                 {
-                    Movement::setJumping(id, JUMPING::FALSE);
+                    Movement::setJumping(id, false);
                     physics.jumpClock.restart();
                 }
             }
+        }
+
+        bool isMidAir(EntityID id) noexcept
+        {
+            const auto& physics = Component::physics[id].value();
+            return !physics.onGround;
+        }
+
+        bool getOnGround(EntityID id) noexcept
+        {
+            const auto& physics = Component::physics[id].value();
+            return physics.onGround;
+        }
+
+        float getSpeed(EntityID id) noexcept
+        {
+            const auto& physics = Component::physics[id].value();
+            return physics.speed;
+        }
+
+        unsigned int getMaxJumpHeight(EntityID id) noexcept
+        {
+            const auto& physics = Component::physics[id].value();
+            return physics.maxJumpHeight;
+        }
+
+        void setOnGround(EntityID id, bool on_ground) noexcept
+        {
+            auto& physics = Component::physics[id].value();
+            physics.onGround = on_ground;
         }
 
         namespace Helper
@@ -567,20 +526,17 @@ namespace System
             void checkTouchedBlock(EntityID second_id, COLLISION collision)
             {
                 if(collision == COLLISION::BOTTOM) {
-                    Animation::setAllowPlay(second_id, ALLOW::TRUE);
+                    Animation::setAllowPlay(second_id, true);
                 }
             }
 
             void checkTouchedGoomba(EntityID id, EntityID second_id, COLLISION collision)
             {
-                if(collision == COLLISION::TOP) {
+                if(collision == COLLISION::TOP) 
+                {
                     Animation::setCurrentAnimation(second_id, int(Enum::Animation::DEAD));
                     Game::Helper::removeID(second_id, WAIT_FOR_ANIM::TRUE);
                     Movement::jump(id, PLAYER_KILL, FORCE::TRUE);
-                } else {
-                    #ifndef ENABLE_DEBUG_MODE
-                    Debug::print("player touched in a place he shouldn't on enemy!");
-                    #endif
                 }
             }
         } // namespace Helper

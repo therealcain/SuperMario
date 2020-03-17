@@ -10,6 +10,12 @@ namespace Entity
     namespace Block 
     {
         void create(const sf::Vector2f& position, Enum::Block type) noexcept;
+
+        namespace Helper
+        {
+            void setupAnimations(EntityID id, Enum::Block type) noexcept;
+            void setupUpdateFunction(EntityID id) noexcept;
+        } // namespace Helper
     } // namespace Block
 
     namespace Cloud 
@@ -20,8 +26,13 @@ namespace Entity
     namespace Coin 
     {
         void create(const sf::Vector2f& position) noexcept;
-    } // namespace Coin
 
+        namespace Helper
+        {
+            void setupAnimations(EntityID id) noexcept;
+            void setupUpdateFunction(EntityID id) noexcept;
+        } // namespace Helper
+    } // namespace Coin
 } // namespace Entity
 
 #endif

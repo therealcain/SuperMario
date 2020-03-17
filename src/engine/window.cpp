@@ -31,7 +31,7 @@ void Window::updateCamera(EntityID player_id) noexcept
 {
 	if(Manager::canAccess(player_id)) {
 		const sf::Vector2f& objectPosition = Component::bases[player_id] ->sprite.getPosition();
-		const bool playerRunning 		   = System::Movement::getRunning(player_id);
+		const bool playerRunning		   = System::Movement::getRunning(player_id);
 
 		if(System::Movement::getMoving(player_id)) 
 		{	

@@ -18,11 +18,12 @@ namespace Entity
             
             void startMovement(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction);   
             void checkJump(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction) noexcept;
+            void checkShooting(EntityID id, Enum::Mature maturity);
             bool checkCrouch(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction) noexcept;
             bool checkMovementRight(EntityID id, float speed, Enum::Mature maturity, Enum::Direction looking_direction) noexcept;
             bool checkMovementLeft(EntityID id, float speed, Enum::Mature maturity, Enum::Direction looking_direction) noexcept;
             void IDLE(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction);
-            
+
             float checkSpeed() noexcept;
             bool checkPlayerRunning(float speed) noexcept;
 

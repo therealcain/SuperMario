@@ -14,10 +14,10 @@
 
 #include "../components.hpp"
 
+// NO USAGE FOR IT CURRENTLY -------------------------------- //
 // ---------------------------------------------------------- //
 // Make sure a type is indeed a std:unordered_map
 // ---------------------------------------------------------- //
-// no usage for it currently
 #if false
 template<typename KEY>
 struct is_unordered_map 
@@ -26,7 +26,6 @@ struct is_unordered_map
 template<typename KEY, typename VALUE>
 struct is_unordered_map<std::unordered_map<KEY, VALUE>> 
     : std::true_type {};
-#endif
 
 // ---------------------------------------------------------- //
 // Decay and remove the pointer from a type
@@ -73,6 +72,7 @@ struct is_string // C string and C++ std::string
 
 template<typename T>
 constexpr bool is_string_v = is_string<T>::value;
+#endif
 
 // ---------------------------------------------------------- //
 // Check if a type is one of the components

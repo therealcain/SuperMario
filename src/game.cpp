@@ -19,6 +19,7 @@ Game::Game()
 
 	Entity::Block::create(sf::Vector2f(220, 160), Enum::Block::BRICK);
 	Entity::Block::create(sf::Vector2f(180, 205), Enum::Block::EMPTY);
+	Enemy::Goomba::create(sf::Vector2f(300, 50));
 }
 
 bool Game::run() noexcept {

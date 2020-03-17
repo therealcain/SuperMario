@@ -5,6 +5,7 @@
 #include "../engine/helpers/functions.hpp"
 #include "../engine/helpers/values.hpp"
 #include "../engine/components.hpp"
+#include "enemies.hpp"
 
 namespace Entity 
 {
@@ -29,115 +30,112 @@ namespace Entity
             void setupAnimation(EntityID id) noexcept
             {
                 Manager::addComponent<Component::Animation>(id, BE_NULL::FALSE);
-                if(System::Animation::isPrepared(id)) 
-                {   
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::CHILD), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(133, 99, 145, 114)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::CHILD), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(133, 99, 145, 114)));
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::CHILD), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(83, 99, 95, 114)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::CHILD), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(83, 99, 95, 114)));
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::CHILD), {
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(148, 99, 160, 114)),
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(163, 98, 177, 114))
-                    });
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::CHILD), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(148, 99, 160, 114)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(163, 98, 177, 114))
+                });
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::CHILD), {
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(68, 99, 80, 114)),
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(50, 98, 65, 114))
-                    });
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::CHILD), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(68, 99, 80, 114)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(50, 98, 65, 114))
+                });
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::CHILD), {
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(148, 99, 160, 114)),
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(163, 98, 177, 114))
-                    });
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::CHILD), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(148, 99, 160, 114)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(163, 98, 177, 114))
+                });
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::CHILD), {
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(68, 99, 80, 114)),
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(50, 98, 65, 114))
-                    });
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::CHILD), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(68, 99, 80, 114)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(50, 98, 65, 114))
+                });
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::CHILD), {
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(68, 99, 80, 114)),
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(50, 98, 65, 114))
-                    });
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::CHILD), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(68, 99, 80, 114)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(50, 98, 65, 114))
+                });
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::CHILD), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(180, 98, 196, 114)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::CHILD), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(180, 98, 196, 114)));
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::CHILD), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(32, 98, 48, 114)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::CHILD), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(32, 98, 48, 114)));
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::TEENAGE), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(116, 3, 130, 34)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::TEENAGE), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(116, 3, 130, 34)));
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::TEENAGE), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(100, 3, 114, 33)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::TEENAGE), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(100, 3, 114, 33)));
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::TEENAGE), {
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(136, 4, 152, 34)),
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(156, 5, 172, 34))
-                    });
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::TEENAGE), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(136, 4, 152, 34)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(156, 5, 172, 34))
+                });
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::TEENAGE), {
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(78, 4, 94, 34)),
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(58, 5, 74, 34))
-                    });
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::TEENAGE), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(78, 4, 94, 34)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(58, 5, 74, 34))
+                });
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::TEENAGE), {
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(136, 4, 152, 34)),
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(156, 5, 172, 34))
-                    });
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::TEENAGE), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(136, 4, 152, 34)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(156, 5, 172, 34))
+                });
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::TEENAGE), {
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(78, 4, 94, 34)),
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(58, 5, 74, 34))
-                    });
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::TEENAGE), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(78, 4, 94, 34)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(58, 5, 74, 34))
+                });
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::TEENAGE), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(175, 4, 191, 34)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::TEENAGE), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(175, 4, 191, 34)));
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::TEENAGE), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(39, 4, 55, 34)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::TEENAGE), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(39, 4, 55, 34)));
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::TEENAGE), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(194, 12, 210, 34)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::TEENAGE), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(194, 12, 210, 34)));
 
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::TEENAGE), 
-                        System::Animation::Helper::extractTextureRect(sf::IntRect(20, 12, 36, 34)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::TEENAGE), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(20, 12, 36, 34)));
 
-                    auto& adultIdleRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::ADULT), adultIdleRight);
+                auto& adultIdleRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::ADULT), adultIdleRight);
 
-                    auto& adultIdleLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::ADULT), adultIdleLeft);
+                auto& adultIdleLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::ADULT), adultIdleLeft);
 
-                    auto& adultWalkRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::ADULT), adultWalkRight);
+                auto& adultWalkRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::ADULT), adultWalkRight);
 
-                    auto& adultWalkLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::ADULT), adultWalkLeft);
+                auto& adultWalkLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::ADULT), adultWalkLeft);
 
-                    auto& adultRunRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::ADULT), adultRunRight);
+                auto& adultRunRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::ADULT), adultRunRight);
 
-                    auto& adultRunLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::ADULT), adultRunLeft);
+                auto& adultRunLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::ADULT), adultRunLeft);
 
-                    auto& adultJumpRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::ADULT), adultJumpRight);
+                auto& adultJumpRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::ADULT), adultJumpRight);
 
-                    auto& adultJumpLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::ADULT), adultJumpLeft);
+                auto& adultJumpLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::ADULT), adultJumpLeft);
 
-                    auto& adultCrouchRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::ADULT), adultCrouchRight);
+                auto& adultCrouchRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::ADULT), adultCrouchRight);
 
-                    auto& adultCrouchLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::TEENAGE)));
-                    System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::ADULT), adultCrouchLeft);
-                }
+                auto& adultCrouchLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::TEENAGE)));
+                System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::ADULT), adultCrouchLeft);
 
-                System::Animation::setAllowPlay(id, ALLOW::TRUE);
+                System::Animation::setAllowPlay(id, true);
             }
 
             void setupUpdateFunction(EntityID id) noexcept
@@ -149,11 +147,9 @@ namespace Entity
                     static const sf::Texture defaultTexture = *base.sprite.getTexture();
                     static const sf::Texture whiteTexture   = changeMarioRednessColor(*base.sprite.getTexture(), sf::Color(255, 250, 250));
 
-                    System::Movement::setMoving(update_id, MOVING::FALSE);
+                    System::Movement::setMoving(update_id, false);
 
-                    if(System::Physics::isPrepared(update_id)) {
-                        System::Physics::start(update_id);
-                    }
+                    System::Physics::start(update_id);
 
                     // get the maturity from the optional variant
                     const auto maturity = std::get<Enum::Mature>(Component::types[update_id] ->whatType.value());
@@ -163,7 +159,8 @@ namespace Entity
 
                     if(maturity == Enum::Mature::ADULT) {
                         base.sprite.setTexture(whiteTexture);
-                    } else {
+                    } 
+                    else {
                         base.sprite.setTexture(defaultTexture);
                     }
 
@@ -173,17 +170,15 @@ namespace Entity
 
             void startMovement(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction)
             {
-                if(System::Movement::isPrepared(id))
-                {
-                    float speed = Player::Helper::checkSpeed();
+                float speed = Player::Helper::checkSpeed();
 
-                    Player::Helper::checkJump(id, maturity, looking_direction);
+                Player::Helper::checkJump(id, maturity, looking_direction);
+                Player::Helper::checkShooting(id, maturity);
 
-                    if(Player::Helper::checkCrouch(id, maturity, looking_direction));
-                    else if(Player::Helper::checkMovementRight(id, speed, maturity, looking_direction));
-                    else if(Player::Helper::checkMovementLeft(id, speed, maturity, looking_direction));
-                    else Player::Helper::IDLE(id, maturity, looking_direction);
-                }
+                if(Player::Helper::checkCrouch(id, maturity, looking_direction))                    {}
+                else if(Player::Helper::checkMovementRight(id, speed, maturity, looking_direction)) {}
+                else if(Player::Helper::checkMovementLeft(id, speed, maturity, looking_direction))  {}
+                else Player::Helper::IDLE(id, maturity, looking_direction);
             }
             
             void checkJump(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction) noexcept
@@ -207,6 +202,24 @@ namespace Entity
                             case Enum::Direction::BOTTOM: [[fallthrough]];
                             case Enum::Direction::NONE:   [[fallthrough]];
                             default: break;
+                        }
+                    }
+                }
+            }
+
+            void checkShooting(EntityID id, Enum::Mature maturity)
+            {
+                if(maturity == Enum::Mature::ADULT)
+                {
+                    static sf::Clock clock;
+                    if(sf::Time timer = clock.getElapsedTime();
+                        timer >= sf::milliseconds(PLAYER_FIRE))
+                    {
+                        if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) 
+                        {
+                            auto& base = Component::bases[id].value();
+                            Enemy::Fire::create(base.sprite.getPosition(), id);
+                            clock.restart();
                         }
                     }
                 }
@@ -250,16 +263,20 @@ namespace Entity
                     System::Movement::setLookingDirection(id, Enum::Direction::RIGHT);
                     System::Movement::moveRight(id, speed);
                     
-                    if(Player::Helper::checkPlayerRunning(speed)) {
-                        System::Movement::setRunning(id, RUNNING::TRUE);
-                        if(System::Physics::isOnGround(id)) {
+                    if(Player::Helper::checkPlayerRunning(speed)) 
+                    {
+                        System::Movement::setRunning(id, true);
+                        if(System::Physics::getOnGround(id)) 
+                        {
                             System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::RUN_RIGHT, maturity));
                             System::Animation::setNextAnimationTimer(id, 100);
                         }
                     } 
-                    else {
-                        System::Movement::setRunning(id, RUNNING::FALSE);
-                        if(System::Physics::isOnGround(id)) {
+                    else 
+                    {
+                        System::Movement::setRunning(id, false);
+                        if(System::Physics::getOnGround(id)) 
+                        {
                             System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::WALK_RIGHT, maturity));
                             System::Animation::setNextAnimationTimer(id, 150);
                         }
@@ -280,16 +297,20 @@ namespace Entity
                     System::Movement::setLookingDirection(id, Enum::Direction::LEFT);
                     System::Movement::moveLeft(id, speed);
                     
-                    if(Player::Helper::checkPlayerRunning(speed)) {
-                        System::Movement::setRunning(id, RUNNING::TRUE);
-                        if(System::Physics::isOnGround(id)) {
+                    if(Player::Helper::checkPlayerRunning(speed)) 
+                    {
+                        System::Movement::setRunning(id, true);
+                        if(System::Physics::getOnGround(id)) 
+                        {
                             System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::RUN_LEFT, maturity));
                             System::Animation::setNextAnimationTimer(id, 100);
                         }
                     } 
-                    else {
-                        System::Movement::setRunning(id, RUNNING::FALSE);
-                        if(System::Physics::isOnGround(id)) {
+                    else 
+                    {
+                        System::Movement::setRunning(id, false);
+                        if(System::Physics::getOnGround(id)) 
+                        {
                             System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::WALK_LEFT, maturity));
                             System::Animation::setNextAnimationTimer(id, 150);
                         }
@@ -303,7 +324,7 @@ namespace Entity
 
             void IDLE(EntityID id, Enum::Mature maturity, Enum::Direction looking_direction)
             {
-                if(System::Physics::isOnGround(id))
+                if(System::Physics::getOnGround(id))
                 {
                     // IDLE
                     switch(looking_direction)
@@ -331,6 +352,7 @@ namespace Entity
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
                     speed = SHIFTING_PLAYER_SPEED;
                 }
+
                 return speed;
             }
 

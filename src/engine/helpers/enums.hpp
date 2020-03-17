@@ -90,15 +90,9 @@ namespace Enum
 
 // ----- Using's ----- //
 using BE_NULL       = Enum::BOOLEAN;
-using STOP          = Enum::BOOLEAN;
-using ALLOW         = Enum::BOOLEAN;
-using MOVING        = Enum::BOOLEAN;
-using RUNNING       = Enum::BOOLEAN;
-using JUMPING       = Enum::BOOLEAN;
 using FORCE         = Enum::BOOLEAN;
 using WAIT_FOR_ANIM = Enum::BOOLEAN;
-using STARTED       = Enum::BOOLEAN;
-using FINISHED      = Enum::BOOLEAN;
+using IS_PLAYER     = Enum::BOOLEAN;
 using COLLISION     = Enum::Direction;
     
 #endif
