@@ -98,7 +98,7 @@ using ComponentAnimationOpt = std::optional<Component::Animation>;
 using ComponentUpdateOpt    = std::optional<Component::UpdateFunction>;
 using ComponentMovementOpt  = std::optional<Component::Movement>;
 using ComponentPhysicsOpt   = std::optional<Component::Physics>;
-using ComponentGlobalOpt       = std::optional<Component::Global>;
+using ComponentGlobalOpt    = std::optional<Component::Global>;
 
 using ComponentBaseMap      = std::unordered_map<EntityID, ComponentBaseOpt>;
 using ComponentTypeMap      = std::unordered_map<EntityID, ComponentTypeOpt>;

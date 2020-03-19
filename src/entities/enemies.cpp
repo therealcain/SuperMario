@@ -27,19 +27,19 @@ namespace Enemy
             Fire::Helper::setupUpdateFunction(currentID);
         }
 
-        void create(const sf::Vector2f& position) noexcept
-        {
-            EntityID currentID = Manager::create("assets/fire.png");
+        // void create(const sf::Vector2f& position) noexcept
+        // {
+        //     EntityID currentID = Manager::create("assets/fire.png");
 
-            Component::bases[currentID] -> sprite.setPosition(position);
-            Component::types[currentID] -> type     = Enum::Type::FIRE;
-            Component::types[currentID] -> whatType = std::make_pair(IS_PLAYER::FALSE, std::nullopt);
+        //     Component::bases[currentID] -> sprite.setPosition(position);
+        //     Component::types[currentID] -> type     = Enum::Type::FIRE;
+        //     Component::types[currentID] -> whatType = std::make_pair(IS_PLAYER::FALSE, std::nullopt);
 
-            Manager::addComponent<Component::Movement>(currentID, BE_NULL::FALSE);
-            Manager::addComponent<Component::Physics>(currentID, BE_NULL::FALSE);
-            Manager::addComponent<Component::Global>(currentID, BE_NULL::FALSE);
-            Fire::Helper::setupUpdateFunction(currentID);
-        }
+        //     Manager::addComponent<Component::Movement>(currentID, BE_NULL::FALSE);
+        //     Manager::addComponent<Component::Physics>(currentID, BE_NULL::FALSE);
+        //     Manager::addComponent<Component::Global>(currentID, BE_NULL::FALSE);
+        //     Fire::Helper::setupUpdateFunction(currentID);
+        // }
 
         namespace Helper
         {
@@ -55,9 +55,10 @@ namespace Enemy
                     if(isPlayer) 
                     {
                         EntityID playerID = pairPlayer.second.value();
-                        const auto playerLookingDirection = System::Movement::getLookingDirection(playerID);
                         const auto& clock = System::Global::getClock(update_id);
 
+                        // get where the player is looking at and set it once in globals
+                        const auto playerLookingDirection = System::Movement::getLookingDirection(playerID);
                         if(playerLookingDirection == Enum::Direction::RIGHT) {
                             System::Global::setLeftLookingDirectionOnce(update_id, true);
                         } 
@@ -65,31 +66,35 @@ namespace Enemy
                             System::Global::setLeftLookingDirectionOnce(update_id, false);
                         }
 
-                        auto& fireLookingDirection = throw_if_null(System::Global::getLeftLookingDirection(update_id));
-                        if(fireLookingDirection) {
+                        // get where the player was looking at and move to the same direction
+                        const auto fireRightLookingDirection = throw_if_null(System::Global::getLeftLookingDirection(update_id));
+                        if(fireRightLookingDirection) {
                             System::Movement::moveRight(update_id, FIRE_SPEED);
                         } 
                         else {
                             System::Movement::moveLeft(update_id, FIRE_SPEED);
                         }
 
+                        // jump everytime touching the floor to make the bounce effect
                         if(System::Physics::getOnGround(update_id)) {
                             System::Movement::jump(update_id, FIRE_HEIGHT, FORCE::FALSE);
                         }
 
+                        // if touching anything else than the ground, kill it
                         if(System::Movement::getBlockedDirection(update_id) == Enum::Direction::LEFT   ||
                             System::Movement::getBlockedDirection(update_id) == Enum::Direction::RIGHT ||
                             System::Movement::getBlockedDirection(update_id) == Enum::Direction::BOTTOM)
                         {
                             System::Game::Helper::removeID(update_id, WAIT_FOR_ANIM::FALSE);
                         } 
+
+                        // timer to kill
                         else if(sf::Time timer = clock.getElapsedTime();
                                 timer >= sf::milliseconds(FIRE_KILL_TIMER))
                         {
                             System::Game::Helper::removeID(update_id, WAIT_FOR_ANIM::FALSE);
                         }
                     } 
-                    else {}
                 };
             }
         } // namespace Helper

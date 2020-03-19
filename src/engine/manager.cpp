@@ -65,11 +65,5 @@ namespace Manager
             std::cerr << "ID:" << id << "Removed!" << std::endl;
             #endif
         } 
-        #ifdef ENABLE_DEBUG_MODE
-        else {
-            std::cerr << "ID:" << id << " Cannot be removed!" << std::endl;
-        }   
-        #endif
-
     }
 } // namespace Manager

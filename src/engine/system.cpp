@@ -22,10 +22,15 @@ namespace System
 
     void Render::drawAll() noexcept 
     {
-        for(size_t i = 0; i < Component::maxIndexes; i++) {
-            Render::draw(i);
+        for(auto[id, base] : Component::bases)
+        {
+            if(Manager::canAccess(id)) {
+                m_window.draw(base.value().sprite);   
+            }
         }
     }
+
+
 
     // ----------- Game Loop ------------ //
     namespace Game
@@ -41,8 +46,11 @@ namespace System
 
         void updateAll() noexcept 
         {
-            for(size_t i = 0; i < Component::updates.size(); i++) {
-                Game::update(i);
+            for(auto[id, update] : Component::updates)
+            {
+                if(Manager::canAccess(id)) {
+                    update.value()(id);
+                }
             }
 
             /* first  = EntityID
@@ -373,9 +381,6 @@ namespace System
                     if(secondID != id) 
                     {
                         COLLISION collision = Physics::Helper::checkIntersections(id, secondID);
-                        #ifdef ENABLE_DEBUG_MODE
-                        std::cout << "ID:" << secondID << " Collision:" << int(collision) << std::endl;
-                        #endif
                         auto& secondIDType = Component::types[secondID].value();
 
                         if(secondIDType.type == Enum::Type::BLOCK)

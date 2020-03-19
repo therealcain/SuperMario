@@ -349,12 +349,7 @@ namespace Entity
             float checkSpeed() noexcept
             {
                 // if shift is been pressed change the `speed` to running
-                float speed = PLAYER_SPEED;
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-                    speed = SHIFTING_PLAYER_SPEED;
-                }
-
-                return speed;
+                return sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ? SHIFTING_PLAYER_SPEED : PLAYER_SPEED;
             }
 
             bool checkPlayerRunning(float speed) noexcept

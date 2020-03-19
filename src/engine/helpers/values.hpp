@@ -16,7 +16,7 @@ constexpr float        SHIFTING_PLAYER_SPEED = PLAYER_SPEED + 1;
 constexpr unsigned int PLAYER_FIRE           = 150;
 
 constexpr float        FIRE_SPEED      = SHIFTING_PLAYER_SPEED;
-constexpr unsigned int FIRE_HEIGHT     = 300;
+constexpr unsigned int FIRE_HEIGHT     = 150;
 constexpr unsigned int FIRE_KILL_TIMER = 3000; // ms
 
 constexpr float        ENEMY_SPEED    = 0.6;
