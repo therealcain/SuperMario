@@ -96,11 +96,6 @@ namespace System
         namespace Helper
         {
             COLLISION checkIntersections(EntityID id, EntityID second_id) noexcept;
-
-            // Type Intersection
-            void checkTouchedCoin(EntityID second_id, COLLISION collision);
-            void checkTouchedBlock(EntityID second_id, COLLISION collision);
-            void checkTouchedGoomba(EntityID id, EntityID second_id, COLLISION collision);
         } // namespace Helper
     } // namespace Physics
 

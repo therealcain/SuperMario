@@ -28,7 +28,7 @@ namespace Manager
         Component::maxIndexes++;
 
         #ifdef ENABLE_DEBUG_MODE
-        std::cerr << "ID:" << id << " Created! - " << png << std::endl;
+        std::cout << "ID:" << id << "Created! - " << png << std::endl;
         #endif
         
         return id;
@@ -42,10 +42,6 @@ namespace Manager
         if(Component::bases[id].has_value()) {
             return true;
         }
-        
-        #ifdef ENABLE_DEBUG_MODE
-        std::cerr << "ID:" << id << " Cannot be accessed! " << std::endl;
-        #endif
 
         return false;
     }
@@ -62,7 +58,7 @@ namespace Manager
             Component::updates.erase(id);
 
             #ifdef ENABLE_DEBUG_MODE
-            std::cerr << "ID:" << id << "Removed!" << std::endl;
+            std::cout << "ID:" << id << "Removed!" << std::endl;
             #endif
         } 
     }

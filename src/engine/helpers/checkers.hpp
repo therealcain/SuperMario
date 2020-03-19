@@ -18,10 +18,10 @@
 #define or !=
 #endif
 
-// NO USAGE FOR IT CURRENTLY -------------------------------- //
 // ---------------------------------------------------------- //
 // Make sure a type is indeed a std:unordered_map
 // ---------------------------------------------------------- //
+// NO USAGE FOR IT CURRENTLY -------------------------------- //
 #if false
 template<typename KEY>
 struct is_unordered_map 
