@@ -59,7 +59,7 @@ namespace System
         } // namespace Helper
     } // namespace Animation
 
-    // ----------- Animation ------------ //
+    // ----------- Movement ------------ //
     namespace Movement 
     {
         void moveRight(EntityID id, float speed) noexcept;
@@ -102,7 +102,18 @@ namespace System
             void checkTouchedBlock(EntityID second_id, COLLISION collision);
             void checkTouchedGoomba(EntityID id, EntityID second_id, COLLISION collision);
         } // namespace Helper
-    }
+    } // namespace Physics
+
+    // ----------- Global ------------ //
+    namespace Global
+    {
+        void setMoveLeft(EntityID id, bool move_left) noexcept;
+        bool setLeftLookingDirectionOnce(EntityID id, bool looking_direction) noexcept;
+
+        sf::Clock& getClock(EntityID id) noexcept;
+        bool getMoveLeft(EntityID id) noexcept;
+        const bool* getLeftLookingDirection(EntityID id) noexcept;
+    } // namespace Global
 
 } // namespace System
 

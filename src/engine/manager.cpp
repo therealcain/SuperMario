@@ -17,6 +17,7 @@ namespace Manager
         addComponent<Component::UpdateFunction>(id, BE_NULL::TRUE);
         addComponent<Component::Movement>(id, BE_NULL::TRUE);
         addComponent<Component::Physics>(id, BE_NULL::TRUE);
+        addComponent<Component::Global>(id, BE_NULL::TRUE);
 
         if(not Component::bases[id] ->texture.loadFromFile(png)) {
             throw std::runtime_error( std::string("Failed to load " + png ));

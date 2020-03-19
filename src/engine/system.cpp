@@ -211,6 +211,7 @@ namespace System
 
     } // namespace Animation
 
+    // ----------- Movement ------------ //
     namespace Movement
     {
         void moveRight(EntityID id, float speed) noexcept
@@ -353,10 +354,10 @@ namespace System
         }
     } // namespace Movement
 
+    // ----------- Physics ------------ //
     namespace Physics
     {
         void start(EntityID id) noexcept
-            // split this into smaller functions
         {
             auto& physics  = Component::physics[id].value();
             
@@ -542,5 +543,45 @@ namespace System
         } // namespace Helper
         
     } // namespace Physics
+
+    // ----------- Globals ------------ //
+    namespace Global
+    {        
+        void setMoveLeft(EntityID id, bool move_left) noexcept
+        {
+            auto& global = Component::globals[id].value();
+            global.moveLeft = move_left;
+        }
+
+        bool setLeftLookingDirectionOnce(EntityID id, bool looking_direction) noexcept
+        {
+            auto& global = Component::globals[id].value();
+            if(not global.lookingDirection.has_value()) {
+                global.lookingDirection = looking_direction;
+                return true;
+            }
+
+            return false;
+        }
+
+        sf::Clock& getClock(EntityID id) noexcept
+        {
+            auto& global = Component::globals[id].value();
+            return global.clock;
+        }
+
+        bool getMoveLeft(EntityID id) noexcept
+        {
+            const auto& global = Component::globals[id].value();
+            return global.moveLeft.has_value() ? global.moveLeft.value() : true;
+        }
+
+        const bool* getLeftLookingDirection(EntityID id) noexcept
+        {
+            const auto& global = Component::globals[id].value();
+            return global.lookingDirection.has_value() ? &global.lookingDirection.value() : nullptr;
+        }
+
+    } // namespace Globals
 
 } // namespace System

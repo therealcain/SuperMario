@@ -64,6 +64,15 @@ namespace Manager
                 Component::physics[id] = T();
             }
         }
+        else if constexpr(std::is_same_v<T, Component::Global>)
+        {
+            if(bool(be_null)) {
+                Component::globals[id].reset();
+            }
+            else {
+                Component::globals[id] = T();
+            }
+        }
     }
 }   
 

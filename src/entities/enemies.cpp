@@ -23,6 +23,7 @@ namespace Enemy
 
             Manager::addComponent<Component::Movement>(currentID, BE_NULL::FALSE);
             Manager::addComponent<Component::Physics>(currentID, BE_NULL::FALSE);
+            Manager::addComponent<Component::Global>(currentID, BE_NULL::FALSE);
             Fire::Helper::setupUpdateFunction(currentID);
         }
 
@@ -36,6 +37,7 @@ namespace Enemy
 
             Manager::addComponent<Component::Movement>(currentID, BE_NULL::FALSE);
             Manager::addComponent<Component::Physics>(currentID, BE_NULL::FALSE);
+            Manager::addComponent<Component::Global>(currentID, BE_NULL::FALSE);
             Fire::Helper::setupUpdateFunction(currentID);
         }
 
@@ -49,32 +51,40 @@ namespace Enemy
                     System::Physics::start(update_id);
 
                     auto pairPlayer = std::get<PairIsPlayerID>(*Component::types[update_id].value().whatType);
-                    if(bool(pairPlayer.first)) 
+                    bool isPlayer = bool(pairPlayer.first);
+                    if(isPlayer) 
                     {
-                        static sf::Clock clock;
-                        auto playerLookingDirection = System::Movement::getLookingDirection(pairPlayer.second.value());
-                        if(playerLookingDirection == Enum::Direction::RIGHT) 
-                        {
+                        EntityID playerID = pairPlayer.second.value();
+                        const auto playerLookingDirection = System::Movement::getLookingDirection(playerID);
+                        const auto& clock = System::Global::getClock(update_id);
+
+                        if(playerLookingDirection == Enum::Direction::RIGHT) {
+                            System::Global::setLeftLookingDirectionOnce(update_id, true);
+                        } 
+                        else if(playerLookingDirection == Enum::Direction::LEFT) {
+                            System::Global::setLeftLookingDirectionOnce(update_id, false);
+                        }
+
+                        auto& fireLookingDirection = throw_if_null(System::Global::getLeftLookingDirection(update_id));
+                        if(fireLookingDirection) {
                             System::Movement::moveRight(update_id, FIRE_SPEED);
                         } 
-                        else if(playerLookingDirection == Enum::Direction::LEFT) 
-                        {
+                        else {
                             System::Movement::moveLeft(update_id, FIRE_SPEED);
                         }
 
-                        if(System::Physics::getOnGround(update_id)) 
-                        {
+                        if(System::Physics::getOnGround(update_id)) {
                             System::Movement::jump(update_id, FIRE_HEIGHT, FORCE::FALSE);
                         }
 
-                        if(System::Movement::getBlockedDirection(update_id) == Enum::Direction::LEFT ||
+                        if(System::Movement::getBlockedDirection(update_id) == Enum::Direction::LEFT   ||
                             System::Movement::getBlockedDirection(update_id) == Enum::Direction::RIGHT ||
-                            System::Movement::getBlockedDirection(update_id) == Enum::Direction::TOP)
+                            System::Movement::getBlockedDirection(update_id) == Enum::Direction::BOTTOM)
                         {
                             System::Game::Helper::removeID(update_id, WAIT_FOR_ANIM::FALSE);
                         } 
                         else if(sf::Time timer = clock.getElapsedTime();
-                                timer >= sf::milliseconds(KILL_TIMER))
+                                timer >= sf::milliseconds(FIRE_KILL_TIMER))
                         {
                             System::Game::Helper::removeID(update_id, WAIT_FOR_ANIM::FALSE);
                         }
@@ -92,12 +102,13 @@ namespace Enemy
             EntityID currentID = Manager::create("assets/goomba.png");
 
             Component::bases[currentID] ->sprite.setPosition(position);
-            Component::types[currentID] ->type     = Enum::Type::GOOMBA;
+            Component::types[currentID] ->type = Enum::Type::GOOMBA;
 
             Goomba::Helper::setupAnimation(currentID);
 
             Manager::addComponent<Component::Movement>(currentID, BE_NULL::FALSE);
             Manager::addComponent<Component::Physics>(currentID, BE_NULL::FALSE);
+            Manager::addComponent<Component::Global>(currentID, BE_NULL::FALSE);
             Goomba::Helper::setupUpdateFunction(currentID);
         }
 
@@ -125,13 +136,13 @@ namespace Enemy
                     System::Physics::start(update_id);
 
                     const auto blockedDirection = System::Movement::getBlockedDirection(update_id);
-                    static bool moveLeft = true;
+                    const bool moveLeft = System::Global::getMoveLeft(update_id);
 
                     if(blockedDirection == Enum::Direction::RIGHT) {
-                        moveLeft = false;
+                        System::Global::setMoveLeft(update_id, false);
                     } 
                     else if(blockedDirection == Enum::Direction::LEFT) {
-                        moveLeft = true;
+                        System::Global::setMoveLeft(update_id, true);
                     }
 
                     if(moveLeft) {

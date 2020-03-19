@@ -48,13 +48,6 @@ namespace Enum
         QUESTION_MARK
     };
 
-    // ----------- STATE ----------- //
-    enum class State {
-        DEAD,
-        DYING,
-        ALIVE
-    };
-
     // ----------- MATURE ----------- //
     // this enum class is going to be multiplied for the animation
     // let's say there is a WALK_RIGHT animation, but how do we know how

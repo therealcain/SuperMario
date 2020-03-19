@@ -22,6 +22,7 @@ namespace Entity
             Player::Helper::setupAnimation(currentID);
             Manager::addComponent<Component::Movement>(currentID, BE_NULL::FALSE);
             Manager::addComponent<Component::Physics>(currentID, BE_NULL::FALSE);
+            Manager::addComponent<Component::Global>(currentID, BE_NULL::FALSE);
             Player::Helper::setupUpdateFunction(currentID);
         }
 
@@ -211,7 +212,7 @@ namespace Entity
             {
                 if(maturity == Enum::Mature::ADULT)
                 {
-                    static sf::Clock clock;
+                    auto& clock = System::Global::getClock(id);
                     if(sf::Time timer = clock.getElapsedTime();
                         timer >= sf::milliseconds(PLAYER_FIRE))
                     {

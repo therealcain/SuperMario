@@ -12,13 +12,6 @@
 #include "helpers/enums.hpp"
 #include "helpers/values.hpp"
 
-// if the project is being compiled with the MSVC compiler make sure
-// not to generate any errors about 'not' because it's not in the 
-// MSVC compiler.
-#if _MSC_VER
-#define not !
-#endif
-
 // ----- Using's ------ //
 using EntityID = long unsigned int; // similar to size_t
 
@@ -29,7 +22,6 @@ using VariantWhatType = std::variant</* Block Type */     Enum::Block,
                                      /* Mario Maturity */ Enum::Mature,
                                      /* Mario/Enemy+ID */ PairIsPlayerID>;
 using OptVarWhatType  = std::optional<VariantWhatType>;
-using OptState        = std::optional<Enum::State>;
 
 namespace Component
 {
@@ -38,8 +30,6 @@ namespace Component
     {
         sf::Texture texture;
         sf::Sprite sprite;
-
-        OptState state;
     };
 
     // ----------- TYPE ---------- //
@@ -91,6 +81,14 @@ namespace Component
 
         sf::Clock jumpClock;
     };
+
+    // ----------- Global ------------- //
+    struct Global
+    {
+        sf::Clock clock;
+        std::optional<bool> moveLeft;
+        std::optional<bool> lookingDirection;
+    };
 } // namespace Component
 
 // ----- Using's ----- //
@@ -100,6 +98,7 @@ using ComponentAnimationOpt = std::optional<Component::Animation>;
 using ComponentUpdateOpt    = std::optional<Component::UpdateFunction>;
 using ComponentMovementOpt  = std::optional<Component::Movement>;
 using ComponentPhysicsOpt   = std::optional<Component::Physics>;
+using ComponentGlobalOpt       = std::optional<Component::Global>;
 
 using ComponentBaseMap      = std::unordered_map<EntityID, ComponentBaseOpt>;
 using ComponentTypeMap      = std::unordered_map<EntityID, ComponentTypeOpt>;
@@ -107,6 +106,7 @@ using ComponentAnimationMap = std::unordered_map<EntityID, ComponentAnimationOpt
 using ComponentUpdateMap    = std::unordered_map<EntityID, ComponentUpdateOpt>;
 using ComponentMovementMap  = std::unordered_map<EntityID, ComponentMovementOpt>;
 using ComponentPhysicsMap   = std::unordered_map<EntityID, ComponentPhysicsOpt>;
+using ComponentGlobalMap    = std::unordered_map<EntityID, ComponentGlobalOpt>;
 
 namespace Component
 {
@@ -117,6 +117,7 @@ namespace Component
     inline ComponentUpdateMap    updates;
     inline ComponentMovementMap  movements;
     inline ComponentPhysicsMap   physics;
+    inline ComponentGlobalMap    globals;
 } // namespace Component
 
 #endif
