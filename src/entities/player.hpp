@@ -26,6 +26,7 @@ namespace Entity
 
             float checkSpeed() noexcept;
             bool checkPlayerRunning(float speed) noexcept;
+            bool checkCrouching(EntityID id) noexcept;
 
             sf::Texture changeMarioRednessColor(sf::Texture texture, const sf::Color& color) noexcept;
         }

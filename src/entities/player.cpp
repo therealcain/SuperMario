@@ -261,6 +261,11 @@ namespace Entity
                    System::Movement::getBlockedDirection(id) != Enum::Direction::LEFT) /* make sure the player is not touching the 
                                                                                         the left side of the object to prevent overlapping */ 
                 {
+                    // Don't let the player to be inside an object after crouching
+                    if(Player::Helper::checkCrouching(id)){
+                        System::Movement::jump(id, 30, FORCE::FALSE);
+                    }
+
                     System::Movement::setLookingDirection(id, Enum::Direction::RIGHT);
                     System::Movement::moveRight(id, speed);
                     
@@ -295,6 +300,11 @@ namespace Entity
                     System::Movement::getBlockedDirection(id) != Enum::Direction::RIGHT) /* make sure the player is not touching the 
                                                                                             the right side of the object to prevent overlapping*/ 
                 {
+                    // Don't let the player to be inside an object after crouching
+                    if(Player::Helper::checkCrouching(id)){
+                        System::Movement::jump(id, 30, FORCE::FALSE);
+                    }
+
                     System::Movement::setLookingDirection(id, Enum::Direction::LEFT);
                     System::Movement::moveLeft(id, speed);
                     
@@ -327,6 +337,11 @@ namespace Entity
             {
                 if(System::Physics::getOnGround(id))
                 {
+                    // Don't let the player to be inside an object after crouching
+                    if(Player::Helper::checkCrouching(id)){
+                        System::Movement::jump(id, 30, FORCE::FALSE);
+                    }
+
                     // IDLE
                     switch(looking_direction)
                     {
@@ -355,6 +370,20 @@ namespace Entity
             bool checkPlayerRunning(float speed) noexcept
             {
                 return speed != PLAYER_SPEED;
+            }
+
+            bool checkCrouching(EntityID id) noexcept
+            {
+                int currentAnim = System::Animation::getCurrentAnimation(id);
+                if(currentAnim == sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::TEENAGE) ||
+                   currentAnim == sum<int>(Enum::Animation::CROUCH_LEFT , Enum::Mature::TEENAGE) ||
+                   currentAnim == sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::ADULT)   ||
+                   currentAnim == sum<int>(Enum::Animation::CROUCH_LEFT , Enum::Mature::ADULT))
+                {
+                    return true;
+                }
+
+                return false;
             }
 
             sf::Texture changeMarioRednessColor(sf::Texture texture, const sf::Color& color) noexcept

@@ -51,6 +51,7 @@ namespace System
 
         bool getAnimationFinished(EntityID id) noexcept;
         const AnimationVector* getFrames(EntityID id, int pos) noexcept;
+        int getCurrentAnimation(EntityID id) noexcept;
 
         namespace Helper
         {

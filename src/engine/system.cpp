@@ -31,7 +31,6 @@ namespace System
     }
 
 
-
     // ----------- Game Loop ------------ //
     namespace Game
     {
@@ -205,6 +204,12 @@ namespace System
             }
 
             return nullptr;
+        }
+
+        int getCurrentAnimation(EntityID id) noexcept
+        {
+            const auto& animation = Component::animations[id].value();
+            return animation.currentAnimation;
         }
 
         namespace Helper
@@ -444,15 +449,18 @@ namespace System
 
             if(touchingGround) {
                 Physics::setOnGround(id, true);
-            } else {
+            } 
+            else {
                 Physics::setOnGround(id, false);
             }
 
             Movement::setBlockedDirection(id, blockedDirection);
 
+            // Falling when not touching anything or Jumping
             if(Physics::isMidAir(id) && not Movement::getJumping(id)) {
                 Component::bases[id] ->sprite.move(0, Physics::getSpeed(id));
-            } else if(Movement::getJumping(id)) 
+            } 
+            else if(Movement::getJumping(id)) 
             {
                 Component::bases[id] ->sprite.move(0, Physics::getSpeed(id) * -1);
 
