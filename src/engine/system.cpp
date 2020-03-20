@@ -209,6 +209,18 @@ namespace System
             return animation.currentAnimation;
         }
 
+        bool getStarted(EntityID id) noexcept
+        {
+            const auto& animation = Component::animations[id];
+            return animation.isStarted;
+        }
+
+        bool getFinished(EntityID id) noexcept
+        {
+            const auto& animation = Component::animations[id];
+            return animation.isFinished;
+        }
+
         namespace Helper
         {
             sf::IntRect extractTextureRect(const sf::IntRect& rect) noexcept 
@@ -428,6 +440,16 @@ namespace System
                                     Movement::jump(id, PLAYER_KILL, FORCE::TRUE);
                                 }
                             } 
+                            else if(secondIDType.type == Enum::Type::MUSHROOM)
+                            {
+                                if(collision != COLLISION::NONE) {
+                                    auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
+                                    if(mature == Enum::Mature::CHILD) {
+                                        mature = Enum::Mature::TEENAGE;
+                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
+                                    }
+                                }
+                            }
                         }
                         else if(typeID == Enum::Type::FIRE) 
                         {

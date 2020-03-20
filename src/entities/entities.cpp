@@ -22,6 +22,9 @@ namespace Entity
             Component::types[currentID].whatType = std::make_pair(block_type, 
                                                                 type.has_value() ? type.value() : Enum::Type::NONE);
 
+            Manager::addComponent<Component::GlobalVariables>(currentID);
+            System::GlobalVariables::addAny(currentID); // index 0 - miscellaneous started
+
             Block::Helper::setupAnimations(currentID, block_type);
             Block::Helper::setupUpdateFunction(currentID);
         }   
@@ -92,6 +95,23 @@ namespace Entity
                 Manager::addComponent<Component::UpdateFunction>(id);
                 Component::updates[id] = [](EntityID update_id) -> void {
                     System::Animation::play(update_id);
+
+                    if(System::Animation::getStarted(update_id)) {
+                        System::GlobalVariables::setAnyOnce(update_id, true, 0);
+                    
+                        if(System::GlobalVariables::getLastAny<bool>(update_id)) {
+                            System::GlobalVariables::setAny(update_id, false, 0);
+
+                            auto& pair = std::get<BlockPair>(*Component::types[update_id].whatType);
+                            auto& base = Component::bases[update_id];
+                            switch(pair.second)
+                            {
+                                case Enum::Type::MUSHROOM:
+                                Entity::Mushroom::create(base.sprite.getPosition());
+                                break;
+                            }
+                        }
+                    }
                 };
             }
         } // namespace Helper
@@ -161,42 +181,58 @@ namespace Entity
         } // namespace Helper
     } // namespace Coin
 
-    // namespace Mushroom
-    // {
-    //     void create(const sf::Vector2f& position, GET_FROM get_from) noexcept
-    //     {
-    //         EntityID currentID = Manager::create("assets/mushroom.png");
+    namespace Mushroom
+    {
+        void create(const sf::Vector2f& position) noexcept
+        {
+            EntityID currentID = Manager::create("assets/mushroom.png");
 
-    //         Component::bases[currentID].sprite.setPosition(position);
-    //         Component::types[currentID].type = Enum::Type::MUSHROOM;
-    //         Component::types[currentID].whatType = bool(get_from);
+            Component::bases[currentID].sprite.setPosition(position);
+            Component::types[currentID].type = Enum::Type::MUSHROOM;
 
-    //         Manager::addComponent<Component::Movement>(currentID);
-    //         Manager::addComponent<Component::Physics>(currentID);
-    //         Manager::addComponent<Component::GlobalVariables>(currentID);
+            Manager::addComponent<Component::Movement>(currentID);
+            Manager::addComponent<Component::Physics>(currentID);
+            Manager::addComponent<Component::GlobalVariables>(currentID);
+            System::GlobalVariables::addAny(currentID, true); // index 0 - Jumped
+            System::GlobalVariables::addAny(currentID, false); // index 1 - moveLeft
 
-    //         Coin::Helper::setupUpdateFunction(currentID);
-    //     }
+            Mushroom::Helper::setupUpdateFunction(currentID);
+        }
 
-    //     namespace Helper
-    //     {
-    //         void setupUpdateFunction(EntityID id) noexcept
-    //         {
-    //             Manager::addComponent<Component::UpdateFunction>(id);
-    //             Component::updates[id] = [](EntityID update_id) -> void
-    //             {
-    //                 bool getFrom = std::get<bool>(*Component::types[update_id].value().whatType);
-    //                 if(getFrom) {
-    //                     System::GlobalVariables::setGetOutOnce(update_id, true);
-    //                 }
+        namespace Helper
+        {
+            void setupUpdateFunction(EntityID id) noexcept
+            {
+                Manager::addComponent<Component::UpdateFunction>(id);
+                Component::updates[id] = [](EntityID update_id) -> void
+                {
+                    System::Physics::start(update_id);
 
-    //                 if(System::GlobalVariables::getGetFrom(update_id)) {
-    //                     System::Movement::jump(update_id, 30, FORCE::TRUE);
-    //                 }       
-    //             };
-    //         }
-    //     } // namespace Helper
+                    if(System::GlobalVariables::getAny<bool>(update_id, 0)) 
+                    {
+                        System::Movement::jump(update_id, 100, FORCE::TRUE);
+                        System::GlobalVariables::setAny(update_id, false, 0);
+                    }
 
-    // } // namespace Mushroom
+                    const auto blockedDirection = System::Movement::getBlockedDirection(update_id);
+                    const bool moveLeft = System::GlobalVariables::getAny<bool>(update_id, 1);
+
+                    if(blockedDirection == Enum::Direction::RIGHT) {
+                        System::GlobalVariables::setAny(update_id, false, 1);
+                    } 
+                    else if(blockedDirection == Enum::Direction::LEFT) {
+                        System::GlobalVariables::setAny(update_id, true, 1);
+                    }
+
+                    if(moveLeft) {
+                        System::Movement::moveLeft(update_id, ENEMY_SPEED);
+                    } 
+                    else {
+                        System::Movement::moveRight(update_id, ENEMY_SPEED);
+                    }
+                };
+            }
+        } // namespace Helper
+    } // namespace Mushroom
 
 } // namespace Entity

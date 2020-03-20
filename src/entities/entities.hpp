@@ -35,15 +35,15 @@ namespace Entity
         } // namespace Helper
     } // namespace Coin
 
-    // namespace Mushroom
-    // {
-    //     void create(const sf::Vector2f& position, GET_FROM get_from) noexcept;
+    namespace Mushroom
+    {
+        void create(const sf::Vector2f& position) noexcept;
 
-    //     namespace Helper
-    //     {
-    //         void setupUpdateFunction(EntityID id) noexcept;
-    //     } // namespace Helper
-    // } // namespace Mushroom
+        namespace Helper
+        {
+            void setupUpdateFunction(EntityID id) noexcept;
+        } // namespace Helper
+    } // namespace Mushroom
 } // namespace Entity
 
 #endif

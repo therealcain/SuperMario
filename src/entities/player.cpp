@@ -414,7 +414,6 @@ namespace Entity
                 texture.loadFromImage(img);
                 return texture;
             }
-
         } // namespace Helper
     } // namespace Player
 } // namespace Entity
