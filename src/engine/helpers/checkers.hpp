@@ -91,7 +91,7 @@ struct is_component {
         std::is_same_v<T, Component::UpdateFunction> or
         std::is_same_v<T, Component::Movement>       or
         std::is_same_v<T, Component::Physics>        or
-        std::is_same_v<T, Component::Global>
+        std::is_same_v<T, Component::GlobalVariables>
     };
 };
 

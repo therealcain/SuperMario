@@ -8,6 +8,7 @@
 #include <optional>
 #include <functional>
 #include <variant>
+#include <any>
 
 #include "helpers/enums.hpp"
 #include "helpers/values.hpp"
@@ -17,10 +18,10 @@ using EntityID = long unsigned int; // similar to size_t
 
 using AnimationVector = std::vector<sf::IntRect>;
 using AnimationMap    = std::unordered_map<int, AnimationVector>;
-using PairIsPlayerID  = std::pair<IS_PLAYER, std::optional<EntityID>>;
-using VariantWhatType = std::variant</* Block Type */     Enum::Block, 
+using BlockPair       = std::pair<Enum::Block, Enum::Type>;
+using VariantWhatType = std::variant</* Block Type */     BlockPair, 
                                      /* Mario Maturity */ Enum::Mature,
-                                     /* Mario/Enemy+ID */ PairIsPlayerID>;
+                                     /* Get out*/         bool>;
 using OptVarWhatType  = std::optional<VariantWhatType>;
 
 namespace Component
@@ -82,31 +83,22 @@ namespace Component
         sf::Clock jumpClock;
     };
 
-    // ----------- Global ------------- //
-    struct Global
+    // -------- GLOBALS ------------- //
+    struct GlobalVariables
     {
-        sf::Clock clock;
-        std::optional<bool> moveLeft;
-        std::optional<bool> lookingDirection;
+        std::optional<sf::Clock> clock;
+        std::vector<std::any> values;
     };
 } // namespace Component
 
 // ----- Using's ----- //
-using ComponentBaseOpt      = std::optional<Component::Base>;
-using ComponentTypeOpt      = std::optional<Component::Type>;
-using ComponentAnimationOpt = std::optional<Component::Animation>;
-using ComponentUpdateOpt    = std::optional<Component::UpdateFunction>;
-using ComponentMovementOpt  = std::optional<Component::Movement>;
-using ComponentPhysicsOpt   = std::optional<Component::Physics>;
-using ComponentGlobalOpt    = std::optional<Component::Global>;
-
-using ComponentBaseMap      = std::unordered_map<EntityID, ComponentBaseOpt>;
-using ComponentTypeMap      = std::unordered_map<EntityID, ComponentTypeOpt>;
-using ComponentAnimationMap = std::unordered_map<EntityID, ComponentAnimationOpt>;
-using ComponentUpdateMap    = std::unordered_map<EntityID, ComponentUpdateOpt>;
-using ComponentMovementMap  = std::unordered_map<EntityID, ComponentMovementOpt>;
-using ComponentPhysicsMap   = std::unordered_map<EntityID, ComponentPhysicsOpt>;
-using ComponentGlobalMap    = std::unordered_map<EntityID, ComponentGlobalOpt>;
+using ComponentBaseMap      = std::unordered_map<EntityID, Component::Base>;
+using ComponentTypeMap      = std::unordered_map<EntityID, Component::Type>;
+using ComponentAnimationMap = std::unordered_map<EntityID, Component::Animation>;
+using ComponentUpdateMap    = std::unordered_map<EntityID, Component::UpdateFunction>;
+using ComponentMovementMap  = std::unordered_map<EntityID, Component::Movement>;
+using ComponentPhysicsMap   = std::unordered_map<EntityID, Component::Physics>;
+using ComponentGlobalVarMap = std::unordered_map<EntityID, Component::GlobalVariables>;
 
 namespace Component
 {
@@ -117,7 +109,7 @@ namespace Component
     inline ComponentUpdateMap    updates;
     inline ComponentMovementMap  movements;
     inline ComponentPhysicsMap   physics;
-    inline ComponentGlobalMap    globals;
+    inline ComponentGlobalVarMap globalVariables;
 } // namespace Component
 
 #endif

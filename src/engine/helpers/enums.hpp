@@ -82,10 +82,10 @@ namespace Enum
 
 
 // ----- Using's ----- //
-using BE_NULL       = Enum::BOOLEAN;
 using FORCE         = Enum::BOOLEAN;
 using WAIT_FOR_ANIM = Enum::BOOLEAN;
 using IS_PLAYER     = Enum::BOOLEAN;
+using GET_FROM      = Enum::BOOLEAN;
 using COLLISION     = Enum::Direction;
     
 #endif

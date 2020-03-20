@@ -15,14 +15,14 @@ namespace Entity
         {
             EntityID currentID = Manager::create("assets/mario.png");
 
-            Component::bases[currentID] ->sprite.setPosition(position);
-            Component::types[currentID] ->type     = Enum::Type::MARIO;
-            Component::types[currentID] ->whatType = maturity;
+            Component::bases[currentID].sprite.setPosition(position);
+            Component::types[currentID].type     = Enum::Type::MARIO;
+            Component::types[currentID].whatType = maturity;
 
             Player::Helper::setupAnimation(currentID);
-            Manager::addComponent<Component::Movement>(currentID, BE_NULL::FALSE);
-            Manager::addComponent<Component::Physics>(currentID, BE_NULL::FALSE);
-            Manager::addComponent<Component::Global>(currentID, BE_NULL::FALSE);
+            Manager::addComponent<Component::Movement>(currentID);
+            Manager::addComponent<Component::Physics>(currentID);
+            Manager::addComponent<Component::GlobalVariables>(currentID);
             Player::Helper::setupUpdateFunction(currentID);
         }
 
@@ -30,7 +30,8 @@ namespace Entity
         {
             void setupAnimation(EntityID id) noexcept
             {
-                Manager::addComponent<Component::Animation>(id, BE_NULL::FALSE);
+                Manager::addComponent<Component::Animation>(id);
+
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::CHILD), 
                     System::Animation::Helper::extractTextureRect(sf::IntRect(133, 99, 145, 114)));
 
@@ -141,10 +142,10 @@ namespace Entity
 
             void setupUpdateFunction(EntityID id) noexcept
             {
-                Manager::addComponent<Component::UpdateFunction>(id, BE_NULL::FALSE);
+                Manager::addComponent<Component::UpdateFunction>(id);
                 Component::updates[id] = [](EntityID update_id) -> void
                 {
-                    auto& base = Component::bases[update_id].value();
+                    auto& base = Component::bases[update_id];
                     static const sf::Texture defaultTexture = *base.sprite.getTexture();
                     static const sf::Texture whiteTexture   = changeMarioRednessColor(*base.sprite.getTexture(), sf::Color(255, 250, 250));
 
@@ -153,7 +154,7 @@ namespace Entity
                     System::Physics::start(update_id);
 
                     // get the maturity from the optional variant
-                    const auto maturity = std::get<Enum::Mature>(Component::types[update_id] ->whatType.value());
+                    const auto maturity = std::get<Enum::Mature>(Component::types[update_id].whatType.value());
                     const auto lookingDirection = System::Movement::getLookingDirection(update_id);
 
                     Player::Helper::startMovement(update_id, maturity, lookingDirection);
@@ -212,13 +213,13 @@ namespace Entity
             {
                 if(maturity == Enum::Mature::ADULT)
                 {
-                    auto& clock = System::Global::getClock(id);
+                    auto& clock = System::GlobalVariables::getClock(id);
                     if(sf::Time timer = clock.getElapsedTime();
                         timer >= sf::milliseconds(PLAYER_FIRE))
                     {
                         if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) 
                         {
-                            auto& base = Component::bases[id].value();
+                            auto& base = Component::bases[id];
                             Enemy::Fire::create(base.sprite.getPosition(), id);
                             clock.restart();
                         }

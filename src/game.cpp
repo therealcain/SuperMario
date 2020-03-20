@@ -14,11 +14,11 @@ Game::Game()
 	Entity::Coin::create(sf::Vector2f(300, 160));
 
 	for(size_t i = 1; i < 20; i++) {
-		Entity::Block::create(sf::Vector2f(140 + ( 15 * i), 220), Enum::Block::EMPTY);
+		Entity::Block::create(sf::Vector2f(140 + ( 15 * i), 220), Enum::Block::EMPTY, std::nullopt);
 	}
 
-	Entity::Block::create(sf::Vector2f(220, 160), Enum::Block::BRICK);
-	Entity::Block::create(sf::Vector2f(180, 205), Enum::Block::EMPTY);
+	Entity::Block::create(sf::Vector2f(220, 160), Enum::Block::QUESTION_MARK, Enum::Type::MUSHROOM);
+	Entity::Block::create(sf::Vector2f(180, 205), Enum::Block::EMPTY, std::nullopt);
 	Enemy::Goomba::create(sf::Vector2f(300, 50));
 	Enemy::Goomba::create(sf::Vector2f(350, 50));
 }

@@ -10,7 +10,6 @@ namespace Enemy
     namespace Fire
     {
         void create(const sf::Vector2f& position, EntityID player_id) noexcept;
-        void create(const sf::Vector2f& position) noexcept;
 
         namespace Helper
         {

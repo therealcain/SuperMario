@@ -14,64 +14,25 @@ namespace Manager
     void remove(EntityID id) noexcept;
 
     template<typename T>
-    constexpr std::enable_if_t<is_component_v<T>> addComponent(EntityID id, BE_NULL be_null) noexcept
+    constexpr std::enable_if_t<is_component_v<T>> addComponent(EntityID id) noexcept
     {
-        if constexpr(std::is_same_v<T, Component::Base>) 
-        {
-            if(bool(be_null)) {
-                Component::bases[id].reset();
-            } 
-            else {
-                Component::bases[id] = T();
-            }
+        if constexpr(std::is_same_v<T, Component::Base>) {
+            Component::bases[id] = T();
         }  
-        else if constexpr(std::is_same_v<T, Component::Type>) 
-        {
-            if(bool(be_null)) {
-                Component::types[id].reset();
-            } 
-            else {
-                Component::types[id] = T();
-            }
+        else if constexpr(std::is_same_v<T, Component::Type>) {
+            Component::types[id] = T();
         }
-        else if constexpr(std::is_same_v<T, Component::Animation>) 
-        {
-            if(bool(be_null)) {
-                Component::animations[id].reset();
-            } 
-            else {
-                Component::animations[id] = T();
-            }
+        else if constexpr(std::is_same_v<T, Component::Animation>) {
+            Component::animations[id] = T();
         }
-        else if constexpr(std::is_same_v<T, Component::UpdateFunction>) {
-            Component::updates[id].reset();
+        else if constexpr(std::is_same_v<T, Component::Movement>) {
+            Component::movements[id] = T();
         }
-        else if constexpr(std::is_same_v<T, Component::Movement>) 
-        {
-            if(bool(be_null)) {
-                Component::movements[id].reset();
-            } 
-            else {
-                Component::movements[id] = T();
-            }
+        else if constexpr(std::is_same_v<T, Component::Physics>) {
+            Component::physics[id] = T();
         }
-        else if constexpr(std::is_same_v<T, Component::Physics>) 
-        {
-            if(bool(be_null)) {
-                Component::physics[id].reset();
-            } 
-            else {
-                Component::physics[id] = T();
-            }
-        }
-        else if constexpr(std::is_same_v<T, Component::Global>)
-        {
-            if(bool(be_null)) {
-                Component::globals[id].reset();
-            }
-            else {
-                Component::globals[id] = T();
-            }
+        else if constexpr(std::is_same_v<T, Component::GlobalVariables>){
+            Component::globalVariables[id] = T();
         }
     }
 }   

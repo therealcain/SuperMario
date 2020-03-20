@@ -15,7 +15,7 @@ namespace System
     {
         if(Manager::canAccess(id)) 
         {
-            auto& base = Component::bases[id].value();
+            auto& base = Component::bases[id];
             m_window.draw(base.sprite);
         }
     }
@@ -25,7 +25,7 @@ namespace System
         for(auto[id, base] : Component::bases)
         {
             if(Manager::canAccess(id)) {
-                m_window.draw(base.value().sprite);   
+                m_window.draw(base.sprite);   
             }
         }
     }
@@ -38,7 +38,7 @@ namespace System
         {
             if(Manager::canAccess(id)) 
             {
-                auto& update = Component::updates[id].value();
+                auto& update = Component::updates[id];
                 update(id);
             }
         }
@@ -48,13 +48,13 @@ namespace System
             for(auto[id, update] : Component::updates)
             {
                 if(Manager::canAccess(id)) {
-                    update.value()(id);
+                    update(id);
                 }
             }
 
             /* first  = EntityID
                second = waiting for animation*/
-            for(auto& i : Helper::removeableIDS) 
+            for(auto& i : removeableIDS) 
             {
                 if(Manager::canAccess(i.first)) 
                 {
@@ -71,12 +71,9 @@ namespace System
             }
         }
 
-        namespace Helper 
-        {
-            void removeID(EntityID id, WAIT_FOR_ANIM wait_for_anim) noexcept {
-                removeableIDS.push_back( std::make_pair(id, bool(wait_for_anim)) );
-            }
-        } // namespace Helper
+        void removeID(EntityID id, WAIT_FOR_ANIM wait_for_anim) noexcept {
+            removeableIDS.push_back( std::make_pair(id, bool(wait_for_anim)) );
+        }
     } // namespace Game
 
 
@@ -85,25 +82,25 @@ namespace System
     {
         void setFrames(EntityID id, int pos, const AnimationVector& anims) noexcept 
         {
-            auto& animation = Component::animations[id].value();
+            auto& animation = Component::animations[id];
             animation.animations[pos] = anims;
         }
 
         void setFrames(EntityID id, int pos, const sf::IntRect& anim) noexcept 
         {
-            auto& animation = Component::animations[id].value();
+            auto& animation = Component::animations[id];
             animation.animations[pos] = { anim };
         }
 
         void addFrame(EntityID id, int pos, const sf::IntRect& anim) noexcept
         {
-            auto& animation = Component::animations[id].value();
+            auto& animation = Component::animations[id];
             animation.animations[pos].push_back(anim);
         }
 
         void setCurrentAnimation(EntityID id, int pos) noexcept 
         {
-            auto& animation = Component::animations[id].value();
+            auto& animation = Component::animations[id];
             
             // make sure position exists
             if(animation.animations.find(pos) != animation.animations.end()) 
@@ -116,7 +113,7 @@ namespace System
                     animation.currentAnimation = pos;
 
                     // Set the first frame to sprite
-                    auto& base = Component::bases[id].value();
+                    auto& base = Component::bases[id];
                     base.sprite.setTextureRect(animation.animations[pos][0]);
                 }
             }
@@ -129,38 +126,38 @@ namespace System
 
         void setNextAnimationTimer(EntityID id, unsigned int next_animation_timer = 500) noexcept
         {
-            auto& animation = Component::animations[id].value();
+            auto& animation = Component::animations[id];
             animation.nextFrameTimer = next_animation_timer;
         }
 
         void setStopWhenFinished(EntityID id, bool stop) noexcept
         {
-            auto& animation = Component::animations[id].value();
+            auto& animation = Component::animations[id];
             animation.stopWhenFinished = stop;
         }
 
         void setAllowPlay(EntityID id, bool allow) noexcept
         {
-            auto& animation = Component::animations[id].value();
+            auto& animation = Component::animations[id];
             animation.allowPlay = allow;
         }
 
         void setStarted(EntityID id, bool started) noexcept
         {
-            auto& animation = Component::animations[id].value();
+            auto& animation = Component::animations[id];
             animation.isStarted = started;
         }
 
         void setFinished(EntityID id, bool finished) noexcept
         {
-            auto& animation = Component::animations[id].value();
+            auto& animation = Component::animations[id];
             animation.isFinished = finished;
         }
 
         void play(EntityID id) noexcept 
         {
-            auto& animation = Component::animations[id].value();
-            auto& base = Component::bases[id].value();
+            auto& animation = Component::animations[id];
+            auto& base = Component::bases[id];
 
             if(animation.allowPlay)
             {
@@ -192,13 +189,13 @@ namespace System
 
         bool getAnimationFinished(EntityID id) noexcept
         {
-            const auto& animation = Component::animations[id].value();
+            const auto& animation = Component::animations[id];
             return animation.isFinished;
         }
 
         const AnimationVector* getFrames(EntityID id, int pos) noexcept
         {
-            const auto& animation = Component::animations[id].value();
+            const auto& animation = Component::animations[id];
             if(animation.animations.find(pos) != animation.animations.end()) { 
                 return &animation.animations.at(pos);
             }
@@ -208,7 +205,7 @@ namespace System
 
         int getCurrentAnimation(EntityID id) noexcept
         {
-            const auto& animation = Component::animations[id].value();
+            const auto& animation = Component::animations[id];
             return animation.currentAnimation;
         }
 
@@ -229,7 +226,7 @@ namespace System
     {
         void moveRight(EntityID id, float speed) noexcept
         {
-            auto& base = Component::bases[id].value();
+            auto& base = Component::bases[id];
             base.sprite.move(sf::Vector2f(speed, 0));
             
             Movement::setMoving(id, true);
@@ -238,7 +235,7 @@ namespace System
 
         void moveRight(EntityID id, float speed, Enum::Animation anim) noexcept
         {
-            auto& base = Component::bases[id].value();
+            auto& base = Component::bases[id];
             base.sprite.move(sf::Vector2f(speed, 0));
 
             Animation::setCurrentAnimation(id, int(anim));
@@ -249,7 +246,7 @@ namespace System
 
         void moveLeft(EntityID id, float speed) noexcept
         {
-            auto& base = Component::bases[id].value();
+            auto& base = Component::bases[id];
             base.sprite.move(sf::Vector2f(-speed, 0));
 
             Movement::setMoving(id, true);
@@ -258,7 +255,7 @@ namespace System
 
         void moveLeft(EntityID id, float speed, Enum::Animation anim) noexcept
         {
-            auto& base = Component::bases[id].value();
+            auto& base = Component::bases[id];
             base.sprite.move(sf::Vector2f(-speed, 0));
 
             Animation::setCurrentAnimation(id, int(anim));
@@ -271,17 +268,17 @@ namespace System
         void jump(EntityID id, unsigned int height, FORCE force)
         {
             #ifdef ENABLE_DEBUG_MODE
-            if(not Component::physics[id].has_value()) {
+            if(Component::physics.find(id) == Component::physics.end()) {
                 throw std::runtime_error("Please add physics component to enable jumping!");
             }
             #endif
 
-            auto& movement = Component::movements[id].value();
+            auto& movement = Component::movements[id];
             if((not movement.isJumping && Physics::getOnGround(id)) || bool(force)) 
             {
                 Movement::setJumping(id, true);
 
-                auto& physics = Component::physics[id].value();
+                auto& physics = Component::physics[id];
                 physics.maxJumpHeight = height;
                 physics.jumpClock.restart();
             }
@@ -290,17 +287,17 @@ namespace System
         void jump(EntityID id, unsigned int height, Enum::Animation anim, FORCE force)
         {
             #ifdef ENABLE_DEBUG_MODE
-            if(not Component::physics[id].has_value()) {
+            if(Component::physics.find(id) == Component::physics.end()) {
                 throw std::runtime_error("Please add physics component to enable jumping!");
             }
             #endif
 
-            auto& movement = Component::movements[id].value();
+            auto& movement = Component::movements[id];
             if((not movement.isJumping && Physics::getOnGround(id)) || bool(force)) 
             {
                 Movement::setJumping(id, true);
                 
-                auto& physics = Component::physics[id].value();
+                auto& physics = Component::physics[id];
                 physics.maxJumpHeight = height;
                 physics.jumpClock.restart();
             }
@@ -308,61 +305,61 @@ namespace System
 
         void setLookingDirection(EntityID id, Enum::Direction direction) noexcept
         {
-            auto& movement = Component::movements[id].value();
+            auto& movement = Component::movements[id];
             movement.lookingDirection = direction;
         }
 
         void setBlockedDirection(EntityID id, Enum::Direction direction) noexcept 
         {
-            auto& movement = Component::movements[id].value();
+            auto& movement = Component::movements[id];
             movement.blockedDirection = direction;
         }
 
         void setMoving(EntityID id, bool moving) noexcept
         {
-            auto& movement = Component::movements[id].value();
+            auto& movement = Component::movements[id];
             movement.isMoving = moving;
         }
 
         void setRunning(EntityID id, bool running) noexcept
         {
-            auto& movement = Component::movements[id].value();
+            auto& movement = Component::movements[id];
             movement.isRunning = running;
         }
 
         void setJumping(EntityID id, bool jumping) noexcept
         {
-            auto& movement = Component::movements[id].value();
+            auto& movement = Component::movements[id];
             movement.isJumping = jumping;
         }
 
         Enum::Direction getLookingDirection(EntityID id) noexcept 
         {
-            const auto& movement = Component::movements[id].value();
+            const auto& movement = Component::movements[id];
             return movement.lookingDirection;
         }
 
         Enum::Direction getBlockedDirection(EntityID id) noexcept
         {
-            const auto& movement = Component::movements[id].value();
+            const auto& movement = Component::movements[id];
             return movement.blockedDirection;
         }
 
         bool getJumping(EntityID id) noexcept
         {
-            const auto& movement = Component::movements[id].value();
+            const auto& movement = Component::movements[id];
             return movement.isJumping;
         }
 
         bool getRunning(EntityID id) noexcept
         {
-            const auto& movement = Component::movements[id].value();
+            const auto& movement = Component::movements[id];
             return movement.isRunning;
         }
 
         bool getMoving(EntityID id) noexcept
         {
-            const auto& movement = Component::movements[id].value();
+            const auto& movement = Component::movements[id];
             return movement.isMoving;
         }
     } // namespace Movement
@@ -372,7 +369,8 @@ namespace System
     {
         void start(EntityID id) noexcept
         {
-            auto& physics  = Component::physics[id].value();
+            auto& physics  = Component::physics[id];
+            auto& base     = Component::bases[id];
             
             bool touchingGround = false;
             Enum::Direction blockedDirection = Enum::Direction::NONE;
@@ -384,7 +382,7 @@ namespace System
                     if(secondID != id) 
                     {
                         COLLISION collision = Physics::Helper::checkIntersections(id, secondID);
-                        auto& secondIDType = Component::types[secondID].value();
+                        auto& secondIDType = Component::types[secondID];
 
                         if(secondIDType.type == Enum::Type::BLOCK)
                         {
@@ -406,13 +404,13 @@ namespace System
                             } 
                         }
 
-                        const auto& typeID = Component::types[id].value().type;
+                        const auto& typeID = Component::types[id].type;
                         if(typeID == Enum::Type::MARIO)
                         {
                             if(secondIDType.type == Enum::Type::COIN) 
                             {
                                 if(collision != COLLISION::NONE) {
-                                    Game::Helper::removeID(secondID, WAIT_FOR_ANIM::FALSE);
+                                    Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
                                 }
                             } 
                             else if(secondIDType.type == Enum::Type::BLOCK) 
@@ -426,7 +424,7 @@ namespace System
                                 if(collision == COLLISION::TOP) 
                                 {
                                     Animation::setCurrentAnimation(secondID, int(Enum::Animation::DEAD));
-                                    Game::Helper::removeID(secondID, WAIT_FOR_ANIM::TRUE);
+                                    Game::removeID(secondID, WAIT_FOR_ANIM::TRUE);
                                     Movement::jump(id, PLAYER_KILL, FORCE::TRUE);
                                 }
                             } 
@@ -438,8 +436,8 @@ namespace System
                                 if(collision != COLLISION::NONE)
                                 {
                                     Animation::setCurrentAnimation(secondID, int(Enum::Animation::DEAD));
-                                    Game::Helper::removeID(secondID, WAIT_FOR_ANIM::TRUE);
-                                    Game::Helper::removeID(id, WAIT_FOR_ANIM::FALSE);
+                                    Game::removeID(secondID, WAIT_FOR_ANIM::TRUE);
+                                    Game::removeID(id, WAIT_FOR_ANIM::FALSE);
                                 }
                             }
                         }
@@ -458,11 +456,11 @@ namespace System
 
             // Falling when not touching anything or Jumping
             if(Physics::isMidAir(id) && not Movement::getJumping(id)) {
-                Component::bases[id] ->sprite.move(0, Physics::getSpeed(id));
+                base.sprite.move(0, Physics::getSpeed(id));
             } 
             else if(Movement::getJumping(id)) 
             {
-                Component::bases[id] ->sprite.move(0, Physics::getSpeed(id) * -1);
+                base.sprite.move(0, Physics::getSpeed(id) * -1);
 
                 if(sf::Time timer = physics.jumpClock.getElapsedTime();
                    timer >= sf::milliseconds(Physics::getMaxJumpHeight(id)))
@@ -475,31 +473,31 @@ namespace System
 
         bool isMidAir(EntityID id) noexcept
         {
-            const auto& physics = Component::physics[id].value();
+            const auto& physics = Component::physics[id];
             return !physics.onGround;
         }
 
         bool getOnGround(EntityID id) noexcept
         {
-            const auto& physics = Component::physics[id].value();
+            const auto& physics = Component::physics[id];
             return physics.onGround;
         }
 
         float getSpeed(EntityID id) noexcept
         {
-            const auto& physics = Component::physics[id].value();
+            const auto& physics = Component::physics[id];
             return physics.speed;
         }
 
         unsigned int getMaxJumpHeight(EntityID id) noexcept
         {
-            const auto& physics = Component::physics[id].value();
+            const auto& physics = Component::physics[id];
             return physics.maxJumpHeight;
         }
 
         void setOnGround(EntityID id, bool on_ground) noexcept
         {
-            auto& physics = Component::physics[id].value();
+            auto& physics = Component::physics[id];
             physics.onGround = on_ground;
         }
 
@@ -507,8 +505,8 @@ namespace System
         {
             COLLISION checkIntersections(EntityID id, EntityID second_id) noexcept
             {
-                const sf::FloatRect idGlobalBounds  = Component::bases[id]        -> sprite.getGlobalBounds();
-                const sf::FloatRect sidGlobalBounds = Component::bases[second_id] -> sprite.getGlobalBounds();
+                const sf::FloatRect idGlobalBounds  = Component::bases[id].sprite.getGlobalBounds();
+                const sf::FloatRect sidGlobalBounds = Component::bases[second_id].sprite.getGlobalBounds();
             
                 const float idRight   = idGlobalBounds.left  + (idGlobalBounds.width / 2);
                 const float idBottom  = idGlobalBounds.top   + (idGlobalBounds.height / 2);
@@ -551,47 +549,19 @@ namespace System
                 return COLLISION::NONE;
             }
         } // namespace Helper
-        
     } // namespace Physics
 
-    // ----------- Globals ------------ //
-    namespace Global
-    {        
-        void setMoveLeft(EntityID id, bool move_left) noexcept
-        {
-            auto& global = Component::globals[id].value();
-            global.moveLeft = move_left;
-        }
-
-        bool setLeftLookingDirectionOnce(EntityID id, bool looking_direction) noexcept
-        {
-            auto& global = Component::globals[id].value();
-            if(not global.lookingDirection.has_value()) {
-                global.lookingDirection = looking_direction;
-                return true;
-            }
-
-            return false;
-        }
-
+    namespace GlobalVariables
+    {
         sf::Clock& getClock(EntityID id) noexcept
         {
-            auto& global = Component::globals[id].value();
-            return global.clock;
+            auto& global = Component::globalVariables[id];
+
+            if(not global.clock.has_value()) {
+                global.clock = std::make_optional<sf::Clock>();
+            }
+
+            return global.clock.value();
         }
-
-        bool getMoveLeft(EntityID id) noexcept
-        {
-            const auto& global = Component::globals[id].value();
-            return global.moveLeft.has_value() ? global.moveLeft.value() : true;
-        }
-
-        const bool* getLeftLookingDirection(EntityID id) noexcept
-        {
-            const auto& global = Component::globals[id].value();
-            return global.lookingDirection.has_value() ? &global.lookingDirection.value() : nullptr;
-        }
-
-    } // namespace Globals
-
+    }
 } // namespace System

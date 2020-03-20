@@ -26,11 +26,11 @@ namespace System
         void update(EntityID id) noexcept;
         void updateAll() noexcept;
 
-        namespace Helper 
-        {
+        void removeID(EntityID id, WAIT_FOR_ANIM wait_for_anim) noexcept;
+
+        namespace {
             inline std::vector<std::pair<EntityID, /*wait for animation to finish*/bool>> removeableIDS;
-            void removeID(EntityID id, WAIT_FOR_ANIM wait_for_anim) noexcept;
-        } // namespace Helper
+        } // namespace
     } // namespace Game
 
     // ----------- Animation ------------ //
@@ -100,16 +100,61 @@ namespace System
         } // namespace Helper
     } // namespace Physics
 
-    // ----------- Global ------------ //
-    namespace Global
+    // ----------- GlobalVariables ------------ //
+    namespace GlobalVariables
     {
-        void setMoveLeft(EntityID id, bool move_left) noexcept;
-        bool setLeftLookingDirectionOnce(EntityID id, bool looking_direction) noexcept;
+        template<typename T>
+        inline void addAny(EntityID id, T value) noexcept 
+        {
+            auto& global = Component::globalVariables[id];
+            global.values.push_back(value);
+        }
+
+        inline void addAny(EntityID id) noexcept 
+        {
+            auto& global = Component::globalVariables[id];
+            global.values.push_back({});
+        }
+
+        template<typename T>
+        inline void setAny(EntityID id, T value, size_t vector_position) noexcept 
+        {
+            auto& global = Component::globalVariables[id];
+            global.values[vector_position] = value;
+        }
+
+        template<typename T>
+        inline void setLastAny(EntityID id, T value) noexcept 
+        {
+            auto& global = Component::globalVariables[id];
+            global.values[global.values.size() - 1] = value;
+        }
+
+        template<typename T>
+        inline void setAnyOnce(EntityID id, T value, size_t vector_position) noexcept 
+        {
+            auto& global = Component::globalVariables[id];
+            if(not global.values[vector_position].has_value()) {
+                global.values[vector_position] = value;
+            }
+        }
 
         sf::Clock& getClock(EntityID id) noexcept;
-        bool getMoveLeft(EntityID id) noexcept;
-        const bool* getLeftLookingDirection(EntityID id) noexcept;
-    } // namespace Global
+        
+        template<typename T>
+        inline T getLastAny(EntityID id) noexcept 
+        {
+            auto& global = Component::globalVariables[id];
+            return std::any_cast<T>(global.values[global.values.size() - 1]);
+        }
+
+        template<typename T>
+        inline T getAny(EntityID id, size_t vector_position) noexcept
+        {
+            auto& global = Component::globalVariables[id];
+            return std::any_cast<T>(global.values[vector_position]);
+        }
+    } // namespace GlobalVariables
 
 } // namespace System
 
