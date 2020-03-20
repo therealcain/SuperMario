@@ -95,6 +95,7 @@ namespace System
         unsigned int getMaxJumpHeight(EntityID id) noexcept;
 
         void setOnGround(EntityID id, bool on_ground) noexcept;
+        void setSpeed(EntityID id, float speed) noexcept;
 
         namespace Helper
         {

@@ -109,6 +109,10 @@ namespace Entity
                                 case Enum::Type::MUSHROOM:
                                 Entity::Mushroom::create(base.sprite.getPosition());
                                 break;
+
+                                case Enum::Type::FLOWER:
+                                Entity::Flower::create(base.sprite.getPosition());
+                                break;
                             }
                         }
                     }
@@ -234,5 +238,41 @@ namespace Entity
             }
         } // namespace Helper
     } // namespace Mushroom
+
+    namespace Flower
+    {
+        void create(const sf::Vector2f& position) noexcept
+        {
+            EntityID currentID = Manager::create("assets/flower.png");
+
+            Component::bases[currentID].sprite.setPosition(position);
+            Component::types[currentID].type = Enum::Type::FLOWER;
+
+            Manager::addComponent<Component::Movement>(currentID);
+            Manager::addComponent<Component::Physics>(currentID);
+            Manager::addComponent<Component::GlobalVariables>(currentID);
+            System::GlobalVariables::addAny(currentID, true); // index 0 - Jumped
+
+            Flower::Helper::setupUpdateFunction(currentID);
+        }
+
+        namespace Helper
+        {
+            void setupUpdateFunction(EntityID id) noexcept
+            {
+                Manager::addComponent<Component::UpdateFunction>(id);
+                Component::updates[id] = [](EntityID update_id) -> void
+                {
+                    System::Physics::start(update_id);
+
+                    if(System::GlobalVariables::getAny<bool>(update_id, 0)) 
+                    {
+                        System::Movement::jump(update_id, 100, FORCE::TRUE);
+                        System::GlobalVariables::setAny(update_id, false, 0);
+                    }
+                };
+            }
+        } // namespace Helper
+    } // namespace Flower
 
 } // namespace Entity

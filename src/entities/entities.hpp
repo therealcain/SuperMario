@@ -44,6 +44,16 @@ namespace Entity
             void setupUpdateFunction(EntityID id) noexcept;
         } // namespace Helper
     } // namespace Mushroom
+
+    namespace Flower
+    {
+        void create(const sf::Vector2f& position) noexcept;
+
+        namespace Helper
+        {
+            void setupUpdateFunction(EntityID id) noexcept;
+        } // namespace Helper
+    } // namespace Flower
 } // namespace Entity
 
 #endif

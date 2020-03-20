@@ -447,6 +447,27 @@ namespace System
                                     if(mature == Enum::Mature::CHILD) {
                                         mature = Enum::Mature::TEENAGE;
                                         Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
+
+                                        if(touchingGround){   
+                                            Movement::jump(id, 200, FORCE::TRUE);
+                                        }
+                                    }
+                                }
+                            }
+                            else if(secondIDType.type == Enum::Type::FLOWER)
+                            {
+                                if(collision != COLLISION::NONE) {
+                                    auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
+                                    if(mature == Enum::Mature::TEENAGE) {
+                                        mature = Enum::Mature::ADULT;
+                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
+                                    } 
+                                    else if(mature == Enum::Mature::CHILD) {
+                                        mature = Enum::Mature::TEENAGE;
+                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
+                                        if(touchingGround){   
+                                            Movement::jump(id, 200, FORCE::TRUE);
+                                        }
                                     }
                                 }
                             }
@@ -509,6 +530,12 @@ namespace System
         {
             const auto& physics = Component::physics[id];
             return physics.speed;
+        }
+
+        void setSpeed(EntityID id, float speed) noexcept
+        {
+            auto& physics = Component::physics[id];
+            physics.speed = speed;
         }
 
         unsigned int getMaxJumpHeight(EntityID id) noexcept
