@@ -117,7 +117,7 @@ namespace System
     namespace GlobalVariables
     {
         template<typename T>
-        inline void addAny(EntityID id, T value) noexcept 
+        inline std::enable_if_t<std::is_arithmetic_v<T>> addAny(EntityID id, T value) noexcept 
         {
             auto& global = Component::globalVariables[id];
             global.values.push_back(value);
@@ -130,21 +130,21 @@ namespace System
         }
 
         template<typename T>
-        inline void setAny(EntityID id, T value, size_t vector_position) noexcept 
+        inline std::enable_if_t<std::is_arithmetic_v<T>> setAny(EntityID id, T value, size_t vector_position) noexcept 
         {
             auto& global = Component::globalVariables[id];
             global.values[vector_position] = value;
         }
 
         template<typename T>
-        inline void setLastAny(EntityID id, T value) noexcept 
+        inline std::enable_if_t<std::is_arithmetic_v<T>> setLastAny(EntityID id, T value) noexcept 
         {
             auto& global = Component::globalVariables[id];
             global.values[global.values.size() - 1] = value;
         }
 
         template<typename T>
-        inline void setAnyOnce(EntityID id, T value, size_t vector_position) noexcept 
+        inline std::enable_if_t<std::is_arithmetic_v<T>> setAnyOnce(EntityID id, T value, size_t vector_position) noexcept 
         {
             auto& global = Component::globalVariables[id];
             if(not global.values[vector_position].has_value()) {
@@ -154,14 +154,14 @@ namespace System
 
         sf::Clock& getClock(EntityID id) noexcept;
         
-        template<typename T>
+        template<typename T, typename = std::enable_if<std::is_arithmetic_v<T>>>
         inline T getLastAny(EntityID id) noexcept 
         {
             auto& global = Component::globalVariables[id];
             return std::any_cast<T>(global.values[global.values.size() - 1]);
         }
 
-        template<typename T>
+        template<typename T, typename = std::enable_if<std::is_arithmetic_v<T>>>
         inline T getAny(EntityID id, size_t vector_position) noexcept
         {
             auto& global = Component::globalVariables[id];

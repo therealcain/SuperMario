@@ -627,7 +627,7 @@ namespace System
                         Game::removeID(second_id, WAIT_FOR_ANIM::FALSE);
 
                         if(Physics::getOnGround(id)){   
-                            Movement::jump(id, 150, FORCE::FALSE);
+                            Movement::jump(id, PLAYER_PICKED_MUSHROOM_ON_FLOOR, FORCE::FALSE);
                         }
                     } 
                     else {
@@ -651,7 +651,7 @@ namespace System
                         Game::removeID(second_id, WAIT_FOR_ANIM::FALSE);
                     
                         if(Physics::isMidAir(id)) {
-                            Movement::jump(id, 50, FORCE::FALSE);
+                            Movement::jump(id, PLAYER_PICKED_FLOWER_ON_FLOOR, FORCE::FALSE);
                         }
                     } 
                     else {
