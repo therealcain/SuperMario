@@ -4,25 +4,27 @@ This project is created with Modern C++17 and SFML ( Simple and Fast Multimedia 
 [![Video Sample](https://img.youtube.com/vi/5ow_ju4iNLo/0.jpg)](https://www.youtube.com/watch?v=5ow_ju4iNLo)
 
 # Features
-* Mario Player
+* Mario Player - Added
 * Entities:
 * - Pipe
 * - Blocks:
-* - - Empty
-* - - Brick
-* - - Question Mark
-* - Cloud
-* - Coin
+* - - Empty - Added
+* - - Brick - Added
+* - - Question Mark - Added
+* - Cloud - Added
+* - Coin - Added
 * Enemies:
 * - Koopa Troopa
 * - Piranha Plant
 * - Lakitu
+* - Goomba - Added
+* - Spiny - Added
 * - Bullet Bill
 * - Bowser
 * Miscellaneous:
 * - Star
-* - Mushroom
-* - Plant
+* - Mushroom - Added
+* - Flower - Added
 * - 1 Up
 * Multiplayer
 * Level Design Editor

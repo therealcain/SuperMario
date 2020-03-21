@@ -27,6 +27,17 @@ namespace Enemy
             void setupUpdateFunction(EntityID id) noexcept;
         } // namespace Helper
     } // namespace Goomba
+
+    namespace Spiny
+    {
+        void create(const sf::Vector2f& position) noexcept;
+
+        namespace Helper
+        {
+            void setupAnimation(EntityID id) noexcept;
+            void setupUpdateFunction(EntityID id) noexcept;
+        } // namespace Helper
+    } // namespace Spiny
 } // namespace Enemy
 
 #endif

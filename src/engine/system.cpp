@@ -440,17 +440,26 @@ namespace System
                                     Movement::jump(id, PLAYER_KILL, FORCE::TRUE);
                                 }
                             } 
+                            else if(secondIDType.type == Enum::Type::SPINY) {
+                                if(collision != COLLISION::NONE) 
+                                {
+
+                                }
+                            } 
                             else if(secondIDType.type == Enum::Type::MUSHROOM)
                             {
                                 if(collision != COLLISION::NONE) {
                                     auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
-                                    if(mature == Enum::Mature::CHILD) {
+                                    if(mature == Enum::Mature::CHILD) 
+                                    {
                                         mature = Enum::Mature::TEENAGE;
                                         Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
 
                                         if(touchingGround){   
                                             Movement::jump(id, 200, FORCE::TRUE);
                                         }
+                                    } else {
+                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
                                     }
                                 }
                             }
@@ -458,16 +467,22 @@ namespace System
                             {
                                 if(collision != COLLISION::NONE) {
                                     auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
-                                    if(mature == Enum::Mature::TEENAGE) {
+                                    if(mature == Enum::Mature::TEENAGE) 
+                                    {
                                         mature = Enum::Mature::ADULT;
                                         Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
                                     } 
-                                    else if(mature == Enum::Mature::CHILD) {
+                                    else if(mature == Enum::Mature::CHILD) 
+                                    {
                                         mature = Enum::Mature::TEENAGE;
                                         Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
+
                                         if(touchingGround){   
                                             Movement::jump(id, 200, FORCE::TRUE);
                                         }
+                                    }
+                                    else {
+                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
                                     }
                                 }
                             }
@@ -475,6 +490,15 @@ namespace System
                         else if(typeID == Enum::Type::FIRE) 
                         {
                             if(secondIDType.type == Enum::Type::GOOMBA) 
+                            {
+                                if(collision != COLLISION::NONE)
+                                {
+                                    Animation::setCurrentAnimation(secondID, int(Enum::Animation::DEAD));
+                                    Game::removeID(secondID, WAIT_FOR_ANIM::TRUE);
+                                    Game::removeID(id, WAIT_FOR_ANIM::FALSE);
+                                }
+                            }
+                            else if(secondIDType.type == Enum::Type::SPINY)
                             {
                                 if(collision != COLLISION::NONE)
                                 {

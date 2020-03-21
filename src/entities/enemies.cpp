@@ -96,7 +96,7 @@ namespace Enemy
             Manager::addComponent<Component::Movement>(currentID);
             Manager::addComponent<Component::Physics>(currentID);
             Manager::addComponent<Component::GlobalVariables>(currentID);
-            System::GlobalVariables::addAny(currentID, true); // 0
+            System::GlobalVariables::addAny(currentID, true); // index 0 - moveLeft
 
             Goomba::Helper::setupUpdateFunction(currentID);
         }
@@ -132,6 +132,80 @@ namespace Enemy
                     } 
                     else if(blockedDirection == Enum::Direction::LEFT) {
                         System::GlobalVariables::setLastAny(update_id, true);
+                    }
+
+                    if(moveLeft) {
+                        System::Movement::moveLeft(update_id, ENEMY_SPEED);
+                    } 
+                    else {
+                        System::Movement::moveRight(update_id, ENEMY_SPEED);
+                    }
+
+                    System::Animation::play(update_id);
+                };
+            }
+        } // namespace Helper
+    } // namespace Goomba
+
+    namespace Spiny 
+    {
+        void create(const sf::Vector2f& position) noexcept
+        {  
+            EntityID currentID = Manager::create("assets/spiny.png");
+
+            Component::bases[currentID].sprite.setPosition(position);
+            Component::types[currentID].type = Enum::Type::SPINY;
+
+            Spiny::Helper::setupAnimation(currentID);
+
+            Manager::addComponent<Component::Movement>(currentID);
+            Manager::addComponent<Component::Physics>(currentID);
+            Manager::addComponent<Component::GlobalVariables>(currentID);
+            System::GlobalVariables::addAny(currentID, true); // index 0 - moveLeft
+
+            Spiny::Helper::setupUpdateFunction(currentID);
+        }
+
+        namespace Helper
+        {
+            void setupAnimation(EntityID id) noexcept
+            {
+                Manager::addComponent<Component::Animation>(id);
+                System::Animation::setFrames(id, int(Enum::Animation::WALK_RIGHT), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(47, 0, 63, 16)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(63, 0, 79, 16))
+                });
+
+                System::Animation::setFrames(id, int(Enum::Animation::WALK_LEFT), {
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(31, 0, 47, 16)),
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(15, 0, 31, 16))
+                });
+
+                System::Animation::setFrames(id, int(Enum::Animation::DEAD), 
+                    System::Animation::Helper::extractTextureRect(sf::IntRect(0, 0, 14, 16)));
+
+                System::Animation::setCurrentAnimation(id, int(Enum::Animation::WALK_LEFT));
+                System::Animation::setAllowPlay(id, true);
+            }
+
+            void setupUpdateFunction(EntityID id) noexcept
+            {
+                Manager::addComponent<Component::UpdateFunction>(id);
+                Component::updates[id] = [](EntityID update_id) -> void 
+                {
+                    System::Physics::start(update_id);
+
+                    const auto blockedDirection = System::Movement::getBlockedDirection(update_id);
+                    const bool moveLeft = System::GlobalVariables::getLastAny<bool>(update_id);
+
+                    if(blockedDirection == Enum::Direction::RIGHT) {
+                        System::GlobalVariables::setLastAny(update_id, false);
+                        System::Animation::setCurrentAnimation(update_id, int(Enum::Animation::WALK_RIGHT));
+                    } 
+                    else if(blockedDirection == Enum::Direction::LEFT) 
+                    {
+                        System::GlobalVariables::setLastAny(update_id, true);
+                        System::Animation::setCurrentAnimation(update_id, int(Enum::Animation::WALK_LEFT));
                     }
 
                     if(moveLeft) {
