@@ -29,9 +29,31 @@ namespace System
         void removeID(EntityID id, WAIT_FOR_ANIM wait_for_anim) noexcept;
 
         namespace {
-            inline std::vector<std::pair<EntityID, /*wait for animation to finish*/bool>> removeableIDS;
+            inline std::vector<std::pair<EntityID, 
+                /*wait for animation to finish*/bool>> removeableIDS;
         } // namespace
     } // namespace Game
+
+    // --------- Base ----------------- //
+    namespace Base
+    {
+        void setState(EntityID id, Enum::State state) noexcept;
+
+        sf::Sprite& getSprite(EntityID id) noexcept;
+        Enum::State& getState(EntityID id);
+    }
+
+    // --------- Type ----------------- //
+    namespace Type
+    {
+        void setType(EntityID id, Enum::Type type) noexcept;
+        void setWhatType(EntityID id, BlockPair&& block_pair) noexcept;
+        void setWhatType(EntityID id, Enum::Mature maturity) noexcept;
+
+        Enum::Type getType(EntityID id) noexcept;
+        const BlockPair& getBlockPair(EntityID id) noexcept;
+        Enum::Mature getMaturity(EntityID id) noexcept;
+    }
 
     // ----------- Animation ------------ //
     namespace Animation 
@@ -50,7 +72,7 @@ namespace System
         void setFinished(EntityID id, bool finished) noexcept;
 
         bool getAnimationFinished(EntityID id) noexcept;
-        const AnimationVector* getFrames(EntityID id, int pos) noexcept;
+        const AnimationVector& getFrames(EntityID id, int pos);
         int getCurrentAnimation(EntityID id) noexcept;
         bool getStarted(EntityID id) noexcept;
         bool getFinished(EntityID id) noexcept;

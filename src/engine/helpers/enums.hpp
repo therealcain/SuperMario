@@ -27,6 +27,12 @@ namespace Enum
         STAR
     };
 
+    // --------- STATE ------------ //
+    enum class State {
+        DEAD,
+        ALIVE
+    };
+
     // --------- ANIMATIONS -------- //
     enum class Animation : int {
         NONE    = -2,

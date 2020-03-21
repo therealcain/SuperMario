@@ -17,8 +17,8 @@ namespace Enemy
         {
             EntityID currentID = Manager::create("assets/fire.png");
 
-            Component::bases[currentID].sprite.setPosition(position);
-            Component::types[currentID].type     = Enum::Type::FIRE;
+            System::Base::getSprite(currentID).setPosition(position);
+            System::Type::setType(currentID, Enum::Type::FIRE);
 
             Manager::addComponent<Component::Movement>(currentID);
             Manager::addComponent<Component::Physics>(currentID);
@@ -82,30 +82,60 @@ namespace Enemy
         } // namespace Helper
     } // namespace Fire
 
-    namespace Goomba 
+    void create(const sf::Vector2f& position, Enum::Type enemy_type) noexcept
     {
-        void create(const sf::Vector2f& position) noexcept
-        {  
-            EntityID currentID = Manager::create("assets/goomba.png");
+        Helper::checkErrors(enemy_type);
 
-            Component::bases[currentID].sprite.setPosition(position);
-            Component::types[currentID].type = Enum::Type::GOOMBA;
+        EntityID currentID;
+        switch (enemy_type)
+        {
+        case Enum::Type::GOOMBA:
+            currentID = Manager::create("assets/goomba.png");
+        break;
+        
+        case Enum::Type::SPINY:
+            currentID = Manager::create("assets/spiny.png");
+        break;
 
-            Goomba::Helper::setupAnimation(currentID);
-
-            Manager::addComponent<Component::Movement>(currentID);
-            Manager::addComponent<Component::Physics>(currentID);
-            Manager::addComponent<Component::GlobalVariables>(currentID);
-            System::GlobalVariables::addAny(currentID, true); // index 0 - moveLeft
-
-            Goomba::Helper::setupUpdateFunction(currentID);
+        default:
+        break;
         }
 
-        namespace Helper
+        System::Base::getSprite(currentID).setPosition(position);
+        System::Base::setState(currentID, Enum::State::ALIVE);
+        System::Type::setType(currentID, enemy_type);
+
+        Manager::addComponent<Component::Animation>(currentID);
+        Helper::setupAnimation(currentID, enemy_type);
+
+        Manager::addComponent<Component::Movement>(currentID);
+        Manager::addComponent<Component::Physics>(currentID);
+        Manager::addComponent<Component::UpdateFunction>(currentID);
+
+        Manager::addComponent<Component::GlobalVariables>(currentID);
+        System::GlobalVariables::addAny(currentID, true); // index 0 - moveLeft
+
+        Helper::setupUpdateFunction(currentID);
+    }
+
+    namespace Helper
+    {
+        void checkErrors(Enum::Type enemy_type)
         {
-            void setupAnimation(EntityID id) noexcept
+            if(enemy_type != Enum::Type::GOOMBA &&
+               enemy_type != Enum::Type::SPINY)
             {
-                Manager::addComponent<Component::Animation>(id);
+                throw std::runtime_error("Enemy type is not allowed!");
+            }
+        }
+
+        void setupAnimation(EntityID id, Enum::Type type) noexcept
+        {
+            Manager::addComponent<Component::Animation>(id);
+            switch (type)
+            {
+            case Enum::Type::GOOMBA:
+            {
                 System::Animation::setFrames(id, int(Enum::Animation::WALK), {
                     System::Animation::Helper::extractTextureRect(sf::IntRect(0, 0, 16, 16)),
                     System::Animation::Helper::extractTextureRect(sf::IntRect(16, 0, 32, 16))
@@ -116,61 +146,10 @@ namespace Enemy
 
                 System::Animation::setCurrentAnimation(id, int(Enum::Animation::WALK));
             }
-
-            void setupUpdateFunction(EntityID id) noexcept
+            break;
+            
+            case Enum::Type::SPINY:
             {
-                Manager::addComponent<Component::UpdateFunction>(id);
-                Component::updates[id] = [](EntityID update_id) -> void 
-                {
-                    System::Physics::start(update_id);
-
-                    const auto blockedDirection = System::Movement::getBlockedDirection(update_id);
-                    const bool moveLeft = System::GlobalVariables::getLastAny<bool>(update_id);
-
-                    if(blockedDirection == Enum::Direction::RIGHT) {
-                        System::GlobalVariables::setLastAny(update_id, false);
-                    } 
-                    else if(blockedDirection == Enum::Direction::LEFT) {
-                        System::GlobalVariables::setLastAny(update_id, true);
-                    }
-
-                    if(moveLeft) {
-                        System::Movement::moveLeft(update_id, ENEMY_SPEED);
-                    } 
-                    else {
-                        System::Movement::moveRight(update_id, ENEMY_SPEED);
-                    }
-
-                    System::Animation::play(update_id);
-                };
-            }
-        } // namespace Helper
-    } // namespace Goomba
-
-    namespace Spiny 
-    {
-        void create(const sf::Vector2f& position) noexcept
-        {  
-            EntityID currentID = Manager::create("assets/spiny.png");
-
-            Component::bases[currentID].sprite.setPosition(position);
-            Component::types[currentID].type = Enum::Type::SPINY;
-
-            Spiny::Helper::setupAnimation(currentID);
-
-            Manager::addComponent<Component::Movement>(currentID);
-            Manager::addComponent<Component::Physics>(currentID);
-            Manager::addComponent<Component::GlobalVariables>(currentID);
-            System::GlobalVariables::addAny(currentID, true); // index 0 - moveLeft
-
-            Spiny::Helper::setupUpdateFunction(currentID);
-        }
-
-        namespace Helper
-        {
-            void setupAnimation(EntityID id) noexcept
-            {
-                Manager::addComponent<Component::Animation>(id);
                 System::Animation::setFrames(id, int(Enum::Animation::WALK_RIGHT), {
                     System::Animation::Helper::extractTextureRect(sf::IntRect(47, 0, 63, 16)),
                     System::Animation::Helper::extractTextureRect(sf::IntRect(63, 0, 79, 16))
@@ -183,41 +162,76 @@ namespace Enemy
 
                 System::Animation::setFrames(id, int(Enum::Animation::DEAD), 
                     System::Animation::Helper::extractTextureRect(sf::IntRect(0, 0, 14, 16)));
-
-                System::Animation::setCurrentAnimation(id, int(Enum::Animation::WALK_LEFT));
-                System::Animation::setAllowPlay(id, true);
             }
+            break;
 
-            void setupUpdateFunction(EntityID id) noexcept
+            default:
+            break;
+            }
+        }
+
+        void setupUpdateFunction(EntityID id) noexcept
+        {
+            Component::updates[id] = [](EntityID update_id) -> void
             {
-                Manager::addComponent<Component::UpdateFunction>(id);
-                Component::updates[id] = [](EntityID update_id) -> void 
+                System::Physics::start(update_id);
+
+                auto type = System::Type::getType(update_id);
+                switch(type)
                 {
-                    System::Physics::start(update_id);
+                    case Enum::Type::GOOMBA:
+                        standardMovement(update_id);
+                    break;
 
-                    const auto blockedDirection = System::Movement::getBlockedDirection(update_id);
-                    const bool moveLeft = System::GlobalVariables::getLastAny<bool>(update_id);
-
-                    if(blockedDirection == Enum::Direction::RIGHT) {
-                        System::GlobalVariables::setLastAny(update_id, false);
-                        System::Animation::setCurrentAnimation(update_id, int(Enum::Animation::WALK_RIGHT));
-                    } 
-                    else if(blockedDirection == Enum::Direction::LEFT) 
+                    case Enum::Type::SPINY:
                     {
-                        System::GlobalVariables::setLastAny(update_id, true);
-                        System::Animation::setCurrentAnimation(update_id, int(Enum::Animation::WALK_LEFT));
+                        standardMovement(update_id);
+                        const Enum::State state = System::Base::getState(update_id);
+                        if(state == Enum::State::ALIVE)
+                        {
+                            const bool moveLeft = System::GlobalVariables::getLastAny<bool>(update_id);
+                            if(moveLeft) {
+                                System::Animation::setCurrentAnimation(update_id, int(Enum::Animation::WALK_LEFT));
+                            } 
+                            else  {
+                                System::Animation::setCurrentAnimation(update_id, int(Enum::Animation::WALK_RIGHT));
+                            }
+                        }
+                        
                     }
+                    break;
 
-                    if(moveLeft) {
-                        System::Movement::moveLeft(update_id, ENEMY_SPEED);
-                    } 
-                    else {
-                        System::Movement::moveRight(update_id, ENEMY_SPEED);
-                    }
+                    default:
+                    break;
+                }
 
-                    System::Animation::play(update_id);
-                };
+                System::Animation::play(update_id);
+            };
+        }
+
+        void standardMovement(EntityID id) noexcept
+        {
+            const Enum::State state = System::Base::getState(id);
+
+            if(state == Enum::State::ALIVE)
+            {
+                const auto blockedDirection = System::Movement::getBlockedDirection(id);
+                const bool moveLeft         = System::GlobalVariables::getLastAny<bool>(id);
+
+                if(blockedDirection == Enum::Direction::RIGHT) {
+                    System::GlobalVariables::setLastAny(id, false);
+                } 
+                else if(blockedDirection == Enum::Direction::LEFT) {
+                    System::GlobalVariables::setLastAny(id, true);
+                }
+
+                if(moveLeft) {
+                    System::Movement::moveLeft(id, ENEMY_SPEED);
+                } 
+                else {
+                    System::Movement::moveRight(id, ENEMY_SPEED);
+                }
             }
-        } // namespace Helper
-    } // namespace Goomba
+        }
+    } // Helper
 } // namespace Enemy

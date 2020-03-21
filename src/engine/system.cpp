@@ -13,10 +13,8 @@ namespace System
     // ----------- Render ------------ //
     void Render::draw(EntityID id) noexcept 
     {
-        if(Manager::canAccess(id)) 
-        {
-            auto& base = Component::bases[id];
-            m_window.draw(base.sprite);
+        if(Manager::canAccess(id)) {
+            m_window.draw(System::Base::getSprite(id));
         }
     }
 
@@ -76,6 +74,71 @@ namespace System
         }
     } // namespace Game
 
+    // --------- Base ----------------- //
+    namespace Base
+    {
+        void setState(EntityID id, Enum::State state) noexcept
+        {
+            auto& base = Component::bases[id];
+            base.state = state;
+        }
+
+        sf::Sprite& getSprite(EntityID id) noexcept
+        {
+            auto& base = Component::bases[id];
+            return base.sprite;
+        }
+
+        Enum::State& getState(EntityID id)
+        {
+            auto& base = Component::bases[id];
+            if(not base.state.has_value()) {
+                throw std::runtime_error("state doesn't have a value!");
+            }
+
+            return base.state.value();
+        }
+    }
+
+    // --------- Type ----------------- //
+    namespace Type
+    {
+        void setType(EntityID id, Enum::Type type) noexcept
+        {
+            auto& r_type = Component::types[id];
+            r_type.type = type;
+        }
+
+        void setWhatType(EntityID id, BlockPair&& block_pair) noexcept
+        {
+            auto& type = Component::types[id];
+            type.whatType = block_pair;
+        }
+
+        void setWhatType(EntityID id, Enum::Mature maturity) noexcept
+        {
+            auto& type = Component::types[id];
+            type.whatType = maturity;
+        }
+
+        Enum::Type getType(EntityID id) noexcept
+        {
+            const auto& type = Component::types[id];
+            return type.type;
+        }
+
+        const BlockPair& getBlockPair(EntityID id) noexcept
+        {
+            const auto& type = Component::types[id];
+            return std::get<BlockPair>(*type.whatType);
+        }
+
+        Enum::Mature getMaturity(EntityID id) noexcept
+        {
+            const auto& type = Component::types[id];
+            return std::get<Enum::Mature>(*type.whatType);
+        }
+    }
 
     // ----------- Animation ------------ //
     namespace Animation 
@@ -113,8 +176,7 @@ namespace System
                     animation.currentAnimation = pos;
 
                     // Set the first frame to sprite
-                    auto& base = Component::bases[id];
-                    base.sprite.setTextureRect(animation.animations[pos][0]);
+                    System::Base::getSprite(id).setTextureRect(animation.animations[pos][0]);
                 }
             }
             #ifdef ENABLE_DEBUG_MODE
@@ -157,7 +219,6 @@ namespace System
         void play(EntityID id) noexcept 
         {
             auto& animation = Component::animations[id];
-            auto& base = Component::bases[id];
 
             if(animation.allowPlay)
             {
@@ -179,7 +240,7 @@ namespace System
                     }
 
                     // set the current frame
-                    base.sprite.setTextureRect(animation.animations[animation.currentAnimation][animation.currentFrame]);
+                    System::Base::getSprite(id).setTextureRect(animation.animations[animation.currentAnimation][animation.currentFrame]);
 
                     animation.currentFrame++;
                     animation.clock.restart();
@@ -193,15 +254,15 @@ namespace System
             return animation.isFinished;
         }
 
-        const AnimationVector* getFrames(EntityID id, int pos) noexcept
+        const AnimationVector& getFrames(EntityID id, int pos)
         {
             const auto& animation = Component::animations[id];
-            if(animation.animations.find(pos) != animation.animations.end()) { 
-                return &animation.animations.at(pos);
+            if(animation.animations.find(pos) == animation.animations.end()) { 
+                throw std::runtime_error("Animation Vector doesn't exists!");
             }
 
-            return nullptr;
-        }
+            return animation.animations.at(pos);
+        }   
 
         int getCurrentAnimation(EntityID id) noexcept
         {
@@ -238,8 +299,7 @@ namespace System
     {
         void moveRight(EntityID id, float speed) noexcept
         {
-            auto& base = Component::bases[id];
-            base.sprite.move(sf::Vector2f(speed, 0));
+            System::Base::getSprite(id).move(sf::Vector2f(speed, 0));
             
             Movement::setMoving(id, true);
             Movement::setLookingDirection(id, Enum::Direction::RIGHT);
@@ -247,8 +307,7 @@ namespace System
 
         void moveRight(EntityID id, float speed, Enum::Animation anim) noexcept
         {
-            auto& base = Component::bases[id];
-            base.sprite.move(sf::Vector2f(speed, 0));
+            System::Base::getSprite(id).move(sf::Vector2f(speed, 0));
 
             Animation::setCurrentAnimation(id, int(anim));
 
@@ -258,8 +317,7 @@ namespace System
 
         void moveLeft(EntityID id, float speed) noexcept
         {
-            auto& base = Component::bases[id];
-            base.sprite.move(sf::Vector2f(-speed, 0));
+            System::Base::getSprite(id).move(sf::Vector2f(-speed, 0));
 
             Movement::setMoving(id, true);
             Movement::setLookingDirection(id, Enum::Direction::LEFT);
@@ -267,8 +325,7 @@ namespace System
 
         void moveLeft(EntityID id, float speed, Enum::Animation anim) noexcept
         {
-            auto& base = Component::bases[id];
-            base.sprite.move(sf::Vector2f(-speed, 0));
+            System::Base::getSprite(id).move(sf::Vector2f(-speed, 0));
 
             Animation::setCurrentAnimation(id, int(anim));
 
@@ -391,9 +448,9 @@ namespace System
                     if(secondID != id) 
                     {
                         COLLISION collision = Physics::Helper::checkIntersections(id, secondID);
-                        auto& secondIDType = Component::types[secondID];
+                        const auto secondIDType = Type::getType(secondID);
 
-                        if(secondIDType.type == Enum::Type::BLOCK)
+                        if(secondIDType == Enum::Type::BLOCK)
                         {
                             if(collision == COLLISION::TOP) 
                             {
@@ -469,8 +526,8 @@ namespace System
         {
             COLLISION checkIntersections(EntityID id, EntityID second_id) noexcept
             {
-                const sf::FloatRect idGlobalBounds  = Component::bases[id].sprite.getGlobalBounds();
-                const sf::FloatRect sidGlobalBounds = Component::bases[second_id].sprite.getGlobalBounds();
+                const sf::FloatRect idGlobalBounds  = System::Base::getSprite(id).getGlobalBounds();
+                const sf::FloatRect sidGlobalBounds = System::Base::getSprite(second_id).getGlobalBounds();
             
                 const float idRight   = idGlobalBounds.left  + (idGlobalBounds.width / 2);
                 const float idBottom  = idGlobalBounds.top   + (idGlobalBounds.height / 2);
@@ -516,15 +573,14 @@ namespace System
             void checkFalling(EntityID id) noexcept
             {
                 auto& physics  = Component::physics[id];
-                auto& base     = Component::bases[id];
                 
                 // Falling when not touching anything or Jumping
                 if(Physics::isMidAir(id) && not Movement::getJumping(id)) {
-                    base.sprite.move(0, Physics::getSpeed(id));
+                    System::Base::getSprite(id).move(0, Physics::getSpeed(id));
                 } 
                 else if(Movement::getJumping(id)) 
                 {
-                    base.sprite.move(0, Physics::getSpeed(id) * -1);
+                    System::Base::getSprite(id).move(0, Physics::getSpeed(id) * -1);
 
                     if(sf::Time timer = physics.jumpClock.getElapsedTime();
                     timer >= sf::milliseconds(Physics::getMaxJumpHeight(id)))
@@ -537,8 +593,8 @@ namespace System
 
             void checkTouchingObject(EntityID id, EntityID second_id, COLLISION collision) noexcept
             {
-                const auto& typeID = Component::types[id].type;
-                const auto& secondIDType = Component::types[second_id].type;
+                const auto typeID       = Type::getType(id);
+                const auto secondIDType = Type::getType(second_id);
                 if(typeID == Enum::Type::MARIO)
                 {
                     // Entities
@@ -597,6 +653,7 @@ namespace System
             {
                 if(collision == COLLISION::TOP) 
                 {
+                    System::Base::setState(second_id, Enum::State::DEAD);
                     Animation::setCurrentAnimation(second_id, int(Enum::Animation::DEAD));
                     Game::removeID(second_id, WAIT_FOR_ANIM::TRUE);
                     Movement::jump(id, PLAYER_KILL, FORCE::TRUE);
@@ -620,10 +677,10 @@ namespace System
             {
                 if(collision != COLLISION::NONE) 
                 {
-                    auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
+                    const auto mature = System::Type::getMaturity(id);
                     if(mature == Enum::Mature::CHILD) 
                     {
-                        mature = Enum::Mature::TEENAGE;
+                        System::Type::setWhatType(id, Enum::Mature::TEENAGE);
                         Game::removeID(second_id, WAIT_FOR_ANIM::FALSE);
 
                         if(Physics::getOnGround(id)){   
@@ -644,10 +701,10 @@ namespace System
             {
                 if(collision != COLLISION::NONE) 
                 {
-                    auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
+                    const auto mature = System::Type::getMaturity(id);
                     if(mature == Enum::Mature::TEENAGE) 
                     {
-                        mature = Enum::Mature::ADULT;
+                        System::Type::setWhatType(id, Enum::Mature::ADULT);
                         Game::removeID(second_id, WAIT_FOR_ANIM::FALSE);
                     
                         if(Physics::isMidAir(id)) {
@@ -669,6 +726,7 @@ namespace System
             {
                 if(collision != COLLISION::NONE)
                 {
+                    System::Base::setState(second_id, Enum::State::DEAD);
                     Animation::setCurrentAnimation(second_id, int(Enum::Animation::DEAD));
                     Game::removeID(second_id, WAIT_FOR_ANIM::TRUE);
                     Game::removeID(id, WAIT_FOR_ANIM::FALSE);

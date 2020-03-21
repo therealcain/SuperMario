@@ -20,8 +20,8 @@ Game::Game()
 	Entity::Block::create(sf::Vector2f(220, 160), Enum::Block::QUESTION_MARK, Enum::Type::MUSHROOM);
 	Entity::Block::create(sf::Vector2f(260, 160), Enum::Block::QUESTION_MARK, Enum::Type::FLOWER);
 	Entity::Block::create(sf::Vector2f(180, 205), Enum::Block::EMPTY, std::nullopt);
-	Enemy::Goomba::create(sf::Vector2f(300, 50));
-	Enemy::Spiny::create(sf::Vector2f(350, 50));
+	Enemy::create(sf::Vector2f(350, 50), Enum::Type::GOOMBA);
+	Enemy::create(sf::Vector2f(300, 50), Enum::Type::SPINY);
 }
 
 bool Game::run() noexcept {

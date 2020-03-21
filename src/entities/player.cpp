@@ -15,9 +15,10 @@ namespace Entity
         {
             EntityID currentID = Manager::create("assets/mario.png");
 
-            Component::bases[currentID].sprite.setPosition(position);
-            Component::types[currentID].type     = Enum::Type::MARIO;
-            Component::types[currentID].whatType = maturity;
+            System::Base::getSprite(currentID).setPosition(position);
+            System::Base::setState(currentID, Enum::State::ALIVE);
+            System::Type::setType(currentID, Enum::Type::MARIO);
+            System::Type::setWhatType(currentID, maturity);
 
             Player::Helper::setupAnimation(currentID);
             Manager::addComponent<Component::Movement>(currentID);
@@ -107,34 +108,34 @@ namespace Entity
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::TEENAGE), 
                     System::Animation::Helper::extractTextureRect(sf::IntRect(20, 12, 36, 34)));
 
-                auto& adultIdleRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::TEENAGE)));
+                auto& adultIdleRight = System::Animation::getFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_RIGHT, Enum::Mature::ADULT), adultIdleRight);
 
-                auto& adultIdleLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::TEENAGE)));
+                auto& adultIdleLeft = System::Animation::getFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::IDLE_LEFT, Enum::Mature::ADULT), adultIdleLeft);
 
-                auto& adultWalkRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::TEENAGE)));
+                auto& adultWalkRight = System::Animation::getFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_RIGHT, Enum::Mature::ADULT), adultWalkRight);
 
-                auto& adultWalkLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::TEENAGE)));
+                auto& adultWalkLeft = System::Animation::getFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::WALK_LEFT, Enum::Mature::ADULT), adultWalkLeft);
 
-                auto& adultRunRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::TEENAGE)));
+                auto& adultRunRight = System::Animation::getFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_RIGHT, Enum::Mature::ADULT), adultRunRight);
 
-                auto& adultRunLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::TEENAGE)));
+                auto& adultRunLeft = System::Animation::getFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::RUN_LEFT, Enum::Mature::ADULT), adultRunLeft);
 
-                auto& adultJumpRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::TEENAGE)));
+                auto& adultJumpRight = System::Animation::getFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_RIGHT, Enum::Mature::ADULT), adultJumpRight);
 
-                auto& adultJumpLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::TEENAGE)));
+                auto& adultJumpLeft = System::Animation::getFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::JUMP_LEFT, Enum::Mature::ADULT), adultJumpLeft);
 
-                auto& adultCrouchRight = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::TEENAGE)));
+                auto& adultCrouchRight = System::Animation::getFrames(id, sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_RIGHT, Enum::Mature::ADULT), adultCrouchRight);
 
-                auto& adultCrouchLeft = throw_if_null(System::Animation::getFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::TEENAGE)));
+                auto& adultCrouchLeft = System::Animation::getFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::TEENAGE));
                 System::Animation::setFrames(id, sum<int>(Enum::Animation::CROUCH_LEFT, Enum::Mature::ADULT), adultCrouchLeft);
 
                 System::Animation::setAllowPlay(id, true);
@@ -145,25 +146,24 @@ namespace Entity
                 Manager::addComponent<Component::UpdateFunction>(id);
                 Component::updates[id] = [](EntityID update_id) -> void
                 {
-                    auto& base = Component::bases[update_id];
-                    static const sf::Texture defaultTexture = *base.sprite.getTexture();
-                    static const sf::Texture whiteTexture   = changeMarioRednessColor(*base.sprite.getTexture(), sf::Color(255, 250, 250));
+                    static const sf::Texture defaultTexture = *System::Base::getSprite(update_id).getTexture();
+                    static const sf::Texture whiteTexture   = changeMarioRednessColor(*System::Base::getSprite(update_id).getTexture(), sf::Color(255, 250, 250));
 
                     System::Movement::setMoving(update_id, false);
 
                     System::Physics::start(update_id);
 
                     // get the maturity from the optional variant
-                    const auto maturity = std::get<Enum::Mature>(Component::types[update_id].whatType.value());
+                    const auto maturity = System::Type::getMaturity(update_id);
                     const auto lookingDirection = System::Movement::getLookingDirection(update_id);
 
                     Player::Helper::startMovement(update_id, maturity, lookingDirection);
 
                     if(maturity == Enum::Mature::ADULT) {
-                        base.sprite.setTexture(whiteTexture);
+                        System::Base::getSprite(update_id).setTexture(whiteTexture);
                     } 
                     else {
-                        base.sprite.setTexture(defaultTexture);
+                        System::Base::getSprite(update_id).setTexture(defaultTexture);
                     }
 
                     System::Animation::play(update_id);
@@ -218,8 +218,7 @@ namespace Entity
                     {
                         if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) 
                         {
-                            auto& base = Component::bases[id];
-                            Enemy::Fire::create(base.sprite.getPosition(), id);
+                            Enemy::Fire::create(System::Base::getSprite(id).getPosition(), id);
                             clock.restart();
                         }
                     }

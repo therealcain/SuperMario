@@ -98,6 +98,7 @@ struct is_component {
 template<typename T>
 constexpr bool is_component_v = is_component<T>::value;
 
+#if false
 // ---------------------------------------------------------- //
 // Check if value is null pointer
 // ---------------------------------------------------------- //
@@ -116,5 +117,6 @@ T& throw_if_null(T* val)
 
     return *val;
 }
+#endif
 
 #endif

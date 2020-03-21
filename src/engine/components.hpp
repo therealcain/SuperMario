@@ -20,9 +20,9 @@ using AnimationVector = std::vector<sf::IntRect>;
 using AnimationMap    = std::unordered_map<int, AnimationVector>;
 using BlockPair       = std::pair<Enum::Block, Enum::Type>;
 using VariantWhatType = std::variant</* Block Type */     BlockPair, 
-                                     /* Mario Maturity */ Enum::Mature,
-                                     /* Get out*/         bool>;
+                                     /* Mario Maturity */ Enum::Mature>;
 using OptVarWhatType  = std::optional<VariantWhatType>;
+using StateOpt        = std::optional<Enum::State>;
 
 namespace Component
 {
@@ -31,6 +31,8 @@ namespace Component
     {
         sf::Texture texture;
         sf::Sprite sprite;
+
+        StateOpt state;
     };
 
     // ----------- TYPE ---------- //

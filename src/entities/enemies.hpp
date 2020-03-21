@@ -17,27 +17,15 @@ namespace Enemy
         } // namespace Helper
     } // namespace Fire
 
-    namespace Goomba 
+    void create(const sf::Vector2f& position, Enum::Type enemy_type) noexcept;
+
+    namespace Helper
     {
-        void create(const sf::Vector2f& position) noexcept;
-
-        namespace Helper
-        {
-            void setupAnimation(EntityID id) noexcept;
-            void setupUpdateFunction(EntityID id) noexcept;
-        } // namespace Helper
-    } // namespace Goomba
-
-    namespace Spiny
-    {
-        void create(const sf::Vector2f& position) noexcept;
-
-        namespace Helper
-        {
-            void setupAnimation(EntityID id) noexcept;
-            void setupUpdateFunction(EntityID id) noexcept;
-        } // namespace Helper
-    } // namespace Spiny
+        void checkErrors(Enum::Type enemy_type);
+        void setupAnimation(EntityID id, Enum::Type type) noexcept;
+        void setupUpdateFunction(EntityID id) noexcept;
+        void standardMovement(EntityID id) noexcept;
+    }
 } // namespace Enemy
 
 #endif

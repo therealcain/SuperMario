@@ -16,11 +16,11 @@ namespace Entity
             Block::Helper::errorCheck(block_type, type);
 
             EntityID currentID = Manager::create("assets/block.png");
-
-            Component::bases[currentID].sprite.setPosition(position);
-            Component::types[currentID].type     = Enum::Type::BLOCK;
-            Component::types[currentID].whatType = std::make_pair(block_type, 
-                                                                type.has_value() ? type.value() : Enum::Type::NONE);
+            
+            System::Base::getSprite(currentID).setPosition(position);
+            System::Type::setType(currentID, Enum::Type::BLOCK);
+            System::Type::setWhatType(currentID, std::make_pair(block_type, 
+                                                        type.has_value() ? type.value() : Enum::Type::NONE));
 
             Manager::addComponent<Component::GlobalVariables>(currentID);
             System::GlobalVariables::addAny(currentID); // index 0 - miscellaneous started
@@ -102,16 +102,15 @@ namespace Entity
                         if(System::GlobalVariables::getLastAny<bool>(update_id)) {
                             System::GlobalVariables::setAny(update_id, false, 0);
 
-                            auto& pair = std::get<BlockPair>(*Component::types[update_id].whatType);
-                            auto& base = Component::bases[update_id];
+                            auto& pair = System::Type::getBlockPair(update_id);
                             switch(pair.second)
                             {
                                 case Enum::Type::MUSHROOM:
-                                Entity::Mushroom::create(base.sprite.getPosition());
+                                Entity::Mushroom::create(System::Base::getSprite(update_id).getPosition());
                                 break;
 
                                 case Enum::Type::FLOWER:
-                                Entity::Flower::create(base.sprite.getPosition());
+                                Entity::Flower::create(System::Base::getSprite(update_id).getPosition());
                                 break;
 
                                 // to make the compiler happy
@@ -135,8 +134,8 @@ namespace Entity
         {   
             EntityID currentID = Manager::create("assets/cloud.png");
 
-            Component::bases[currentID].sprite.setPosition(position);
-            Component::types[currentID].type = Enum::Type::CLOUD;
+            System::Base::getSprite(currentID).setPosition(position);
+            System::Type::setType(currentID, Enum::Type::CLOUD);
         }
     } // namespace Cloud
 
@@ -150,8 +149,8 @@ namespace Entity
         {   
             EntityID currentID = Manager::create("assets/coin.png");
 
-            Component::bases[currentID].sprite.setPosition(position);
-            Component::types[currentID].type = Enum::Type::COIN;
+            System::Base::getSprite(currentID).setPosition(position);
+            System::Type::setType(currentID, Enum::Type::COIN);
 
             Coin::Helper::setupAnimations(currentID);
             Coin::Helper::setupUpdateFunction(currentID);
@@ -195,8 +194,8 @@ namespace Entity
         {
             EntityID currentID = Manager::create("assets/mushroom.png");
 
-            Component::bases[currentID].sprite.setPosition(position);
-            Component::types[currentID].type = Enum::Type::MUSHROOM;
+            System::Base::getSprite(currentID).setPosition(position);
+            System::Type::setType(currentID, Enum::Type::MUSHROOM);
 
             Manager::addComponent<Component::Movement>(currentID);
             Manager::addComponent<Component::Physics>(currentID);
@@ -249,8 +248,8 @@ namespace Entity
         {
             EntityID currentID = Manager::create("assets/flower.png");
 
-            Component::bases[currentID].sprite.setPosition(position);
-            Component::types[currentID].type = Enum::Type::FLOWER;
+            System::Base::getSprite(currentID).setPosition(position);
+            System::Type::setType(currentID, Enum::Type::FLOWER);
 
             Manager::addComponent<Component::Movement>(currentID);
             Manager::addComponent<Component::Physics>(currentID);
