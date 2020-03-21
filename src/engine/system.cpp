@@ -381,9 +381,6 @@ namespace System
     {
         void start(EntityID id) noexcept
         {
-            auto& physics  = Component::physics[id];
-            auto& base     = Component::bases[id];
-            
             bool touchingGround = false;
             Enum::Direction blockedDirection = Enum::Direction::NONE;
 
@@ -416,98 +413,7 @@ namespace System
                             } 
                         }
 
-                        const auto& typeID = Component::types[id].type;
-                        if(typeID == Enum::Type::MARIO)
-                        {
-                            if(secondIDType.type == Enum::Type::COIN) 
-                            {
-                                if(collision != COLLISION::NONE) {
-                                    Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
-                                }
-                            } 
-                            else if(secondIDType.type == Enum::Type::BLOCK) 
-                            {
-                                if(collision == COLLISION::BOTTOM) {
-                                    Animation::setAllowPlay(secondID, true);
-                                }
-                            } 
-                            else if(secondIDType.type == Enum::Type::GOOMBA) 
-                            {
-                                if(collision == COLLISION::TOP) 
-                                {
-                                    Animation::setCurrentAnimation(secondID, int(Enum::Animation::DEAD));
-                                    Game::removeID(secondID, WAIT_FOR_ANIM::TRUE);
-                                    Movement::jump(id, PLAYER_KILL, FORCE::TRUE);
-                                }
-                            } 
-                            else if(secondIDType.type == Enum::Type::SPINY) {
-                                if(collision != COLLISION::NONE) 
-                                {
-
-                                }
-                            } 
-                            else if(secondIDType.type == Enum::Type::MUSHROOM)
-                            {
-                                if(collision != COLLISION::NONE) {
-                                    auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
-                                    if(mature == Enum::Mature::CHILD) 
-                                    {
-                                        mature = Enum::Mature::TEENAGE;
-                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
-
-                                        if(touchingGround){   
-                                            Movement::jump(id, 200, FORCE::TRUE);
-                                        }
-                                    } else {
-                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
-                                    }
-                                }
-                            }
-                            else if(secondIDType.type == Enum::Type::FLOWER)
-                            {
-                                if(collision != COLLISION::NONE) {
-                                    auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
-                                    if(mature == Enum::Mature::TEENAGE) 
-                                    {
-                                        mature = Enum::Mature::ADULT;
-                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
-                                    } 
-                                    else if(mature == Enum::Mature::CHILD) 
-                                    {
-                                        mature = Enum::Mature::TEENAGE;
-                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
-
-                                        if(touchingGround){   
-                                            Movement::jump(id, 200, FORCE::TRUE);
-                                        }
-                                    }
-                                    else {
-                                        Game::removeID(secondID, WAIT_FOR_ANIM::FALSE);
-                                    }
-                                }
-                            }
-                        }
-                        else if(typeID == Enum::Type::FIRE) 
-                        {
-                            if(secondIDType.type == Enum::Type::GOOMBA) 
-                            {
-                                if(collision != COLLISION::NONE)
-                                {
-                                    Animation::setCurrentAnimation(secondID, int(Enum::Animation::DEAD));
-                                    Game::removeID(secondID, WAIT_FOR_ANIM::TRUE);
-                                    Game::removeID(id, WAIT_FOR_ANIM::FALSE);
-                                }
-                            }
-                            else if(secondIDType.type == Enum::Type::SPINY)
-                            {
-                                if(collision != COLLISION::NONE)
-                                {
-                                    Animation::setCurrentAnimation(secondID, int(Enum::Animation::DEAD));
-                                    Game::removeID(secondID, WAIT_FOR_ANIM::TRUE);
-                                    Game::removeID(id, WAIT_FOR_ANIM::FALSE);
-                                }
-                            }
-                        }
+                        Physics::Helper::checkTouchingObject(id, secondID, collision);
                     }
                 }
             }
@@ -520,22 +426,7 @@ namespace System
             }
 
             Movement::setBlockedDirection(id, blockedDirection);
-
-            // Falling when not touching anything or Jumping
-            if(Physics::isMidAir(id) && not Movement::getJumping(id)) {
-                base.sprite.move(0, Physics::getSpeed(id));
-            } 
-            else if(Movement::getJumping(id)) 
-            {
-                base.sprite.move(0, Physics::getSpeed(id) * -1);
-
-                if(sf::Time timer = physics.jumpClock.getElapsedTime();
-                   timer >= sf::milliseconds(Physics::getMaxJumpHeight(id)))
-                {
-                    Movement::setJumping(id, false);
-                    physics.jumpClock.restart();
-                }
-            }
+            Physics::Helper::checkFalling(id);
         }
 
         bool isMidAir(EntityID id) noexcept
@@ -620,6 +511,172 @@ namespace System
                 }
 
                 return COLLISION::NONE;
+            }
+
+            void checkFalling(EntityID id) noexcept
+            {
+                auto& physics  = Component::physics[id];
+                auto& base     = Component::bases[id];
+                
+                // Falling when not touching anything or Jumping
+                if(Physics::isMidAir(id) && not Movement::getJumping(id)) {
+                    base.sprite.move(0, Physics::getSpeed(id));
+                } 
+                else if(Movement::getJumping(id)) 
+                {
+                    base.sprite.move(0, Physics::getSpeed(id) * -1);
+
+                    if(sf::Time timer = physics.jumpClock.getElapsedTime();
+                    timer >= sf::milliseconds(Physics::getMaxJumpHeight(id)))
+                    {
+                        Movement::setJumping(id, false);
+                        physics.jumpClock.restart();
+                    }
+                }
+            }
+
+            void checkTouchingObject(EntityID id, EntityID second_id, COLLISION collision) noexcept
+            {
+                const auto& typeID = Component::types[id].type;
+                const auto& secondIDType = Component::types[second_id].type;
+                if(typeID == Enum::Type::MARIO)
+                {
+                    // Entities
+                    if(secondIDType == Enum::Type::COIN) {
+                        Physics::Helper::checkTouchedCoin(id, second_id, collision);
+                    }
+                    else if(secondIDType == Enum::Type::BLOCK) {
+                        Physics::Helper::checkTouchedBlock(id, second_id, collision);
+                    }
+                    else if(secondIDType == Enum::Type::MUSHROOM) {
+                        Physics::Helper::checkTouchedMushroom(id, second_id, collision);
+                    }
+                    else if(secondIDType == Enum::Type::FLOWER) {
+                        Physics::Helper::checkTouchedFlower(id, second_id, collision);
+                    }
+
+                    // Enemies
+                    else if(secondIDType == Enum::Type::GOOMBA) {
+                        Physics::Helper::checkTouchedGoomba(id, second_id, collision);
+                    }
+                    else if(secondIDType == Enum::Type::SPINY) {
+                        Physics::Helper::checkTouchedSpiny(id, second_id, collision);
+                    }
+                }
+                else if(typeID == Enum::Type::FIRE) 
+                {
+                    if(secondIDType == Enum::Type::GOOMBA ||
+                        secondIDType == Enum::Type::SPINY) 
+                    {
+                        Physics::Helper::fireTouchedEnemy(id, second_id, collision);
+                    }
+                }
+            }
+
+            bool checkTouchedCoin(EntityID id, EntityID second_id, COLLISION collision) noexcept
+            {
+                if(collision != COLLISION::NONE) {
+                    Game::removeID(second_id, WAIT_FOR_ANIM::FALSE);
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool checkTouchedBlock(EntityID id, EntityID second_id, COLLISION collision) noexcept
+            {
+                if(collision == COLLISION::BOTTOM) {
+                    Animation::setAllowPlay(second_id, true);
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool checkTouchedGoomba(EntityID id, EntityID second_id, COLLISION collision) noexcept
+            {
+                if(collision == COLLISION::TOP) 
+                {
+                    Animation::setCurrentAnimation(second_id, int(Enum::Animation::DEAD));
+                    Game::removeID(second_id, WAIT_FOR_ANIM::TRUE);
+                    Movement::jump(id, PLAYER_KILL, FORCE::TRUE);
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool checkTouchedSpiny(EntityID id, EntityID second_id, COLLISION collision) noexcept
+            {
+                if(collision != COLLISION::NONE) 
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool checkTouchedMushroom(EntityID id, EntityID second_id, COLLISION collision) noexcept
+            {
+                if(collision != COLLISION::NONE) 
+                {
+                    auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
+                    if(mature == Enum::Mature::CHILD) 
+                    {
+                        mature = Enum::Mature::TEENAGE;
+                        Game::removeID(second_id, WAIT_FOR_ANIM::FALSE);
+
+                        if(Physics::getOnGround(id)){   
+                            Movement::jump(id, 150, FORCE::FALSE);
+                        }
+                    } 
+                    else {
+                        Game::removeID(second_id, WAIT_FOR_ANIM::FALSE);
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool checkTouchedFlower(EntityID id, EntityID second_id, COLLISION collision) noexcept
+            {
+                if(collision != COLLISION::NONE) 
+                {
+                    auto& mature = std::get<Enum::Mature>(*Component::types[id].whatType);
+                    if(mature == Enum::Mature::TEENAGE) 
+                    {
+                        mature = Enum::Mature::ADULT;
+                        Game::removeID(second_id, WAIT_FOR_ANIM::FALSE);
+                    
+                        if(Physics::isMidAir(id)) {
+                            Movement::jump(id, 50, FORCE::FALSE);
+                        }
+                    } 
+                    else {
+                        // Instead of writing what inside mushroom in here
+                        checkTouchedMushroom(id, second_id, collision);
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool fireTouchedEnemy(EntityID id, EntityID second_id, COLLISION collision) noexcept
+            {
+                if(collision != COLLISION::NONE)
+                {
+                    Animation::setCurrentAnimation(second_id, int(Enum::Animation::DEAD));
+                    Game::removeID(second_id, WAIT_FOR_ANIM::TRUE);
+                    Game::removeID(id, WAIT_FOR_ANIM::FALSE);
+                    
+                    return true;
+                }
+
+                return false;
             }
         } // namespace Helper
     } // namespace Physics

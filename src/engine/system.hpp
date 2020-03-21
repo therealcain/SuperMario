@@ -100,6 +100,16 @@ namespace System
         namespace Helper
         {
             COLLISION checkIntersections(EntityID id, EntityID second_id) noexcept;
+
+            void checkFalling(EntityID id) noexcept;
+            void checkTouchingObject(EntityID id, EntityID second_id, COLLISION collision) noexcept;
+            bool checkTouchedCoin(EntityID id, EntityID second_id, COLLISION collision) noexcept;
+            bool checkTouchedBlock(EntityID id, EntityID second_id, COLLISION collision) noexcept;
+            bool checkTouchedGoomba(EntityID id, EntityID second_id, COLLISION collision) noexcept;
+            bool checkTouchedSpiny(EntityID id, EntityID second_id, COLLISION collision) noexcept;
+            bool checkTouchedMushroom(EntityID id, EntityID second_id, COLLISION collision) noexcept;
+            bool checkTouchedFlower(EntityID id, EntityID second_id, COLLISION collision) noexcept;
+            bool fireTouchedEnemy(EntityID id, EntityID second_id, COLLISION collision) noexcept;
         } // namespace Helper
     } // namespace Physics
 

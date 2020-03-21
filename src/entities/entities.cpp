@@ -113,6 +113,10 @@ namespace Entity
                                 case Enum::Type::FLOWER:
                                 Entity::Flower::create(base.sprite.getPosition());
                                 break;
+
+                                // to make the compiler happy
+                                default:
+                                break;
                             }
                         }
                     }

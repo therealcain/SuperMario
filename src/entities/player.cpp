@@ -200,10 +200,9 @@ namespace Entity
                                 System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::JUMP_RIGHT, maturity));
                             break;
 
-                            case Enum::Direction::TOP:    [[fallthrough]];
-                            case Enum::Direction::BOTTOM: [[fallthrough]];
-                            case Enum::Direction::NONE:   [[fallthrough]];
-                            default: break;
+                            // To make the compiler happy
+                            default: 
+                            break;
                         }
                     }
                 }
@@ -245,10 +244,9 @@ namespace Entity
                                 return true;
                             break;
 
-                            case Enum::Direction::TOP:    [[fallthrough]];
-                            case Enum::Direction::BOTTOM: [[fallthrough]];
-                            case Enum::Direction::NONE:   [[fallthrough]];
-                            default: break;
+                            // To make the compiler happy
+                            default: 
+                            break;
                         }
                     }
                 }
@@ -354,10 +352,9 @@ namespace Entity
                             System::Animation::setCurrentAnimation(id, sum<int>(Enum::Animation::IDLE_RIGHT, maturity));
                         break;
 
-                        case Enum::Direction::TOP:    [[fallthrough]];
-                        case Enum::Direction::BOTTOM: [[fallthrough]];
-                        case Enum::Direction::NONE:   [[fallthrough]];
-                        default: break;
+                        // To make the compiler happy
+                        default: 
+                        break;
                     }
                 }
             }
