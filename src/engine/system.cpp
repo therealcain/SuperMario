@@ -751,5 +751,11 @@ namespace System
 
             return global.clock.value();
         }
+
+        bool existsAny(EntityID id, size_t vector_position) noexcept
+        {
+            auto& global = Component::globalVariables[id];
+            return global.values[vector_position].has_value();
+        }
     }
 } // namespace System

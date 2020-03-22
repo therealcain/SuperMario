@@ -218,7 +218,8 @@ namespace Entity
                     {
                         if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) 
                         {
-                            Enemy::Fire::create(System::Base::getSprite(id).getPosition(), id);
+                            const Enum::Direction dir = System::Movement::getLookingDirection(id);
+                            Enemy::Fire::create(System::Base::getSprite(id).getPosition(), id, dir);
                             clock.restart();
                         }
                     }

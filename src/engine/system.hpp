@@ -189,6 +189,8 @@ namespace System
             auto& global = Component::globalVariables[id];
             return std::any_cast<T>(global.values[vector_position]);
         }
+
+        bool existsAny(EntityID id, size_t vector_position) noexcept;
     } // namespace GlobalVariables
 
 } // namespace System

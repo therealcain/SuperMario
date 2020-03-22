@@ -9,21 +9,40 @@ namespace Enemy
 {
     namespace Fire
     {
-        void create(const sf::Vector2f& position, EntityID player_id) noexcept;
+        void create(const sf::Vector2f& position, EntityID player_id, Enum::Direction start_direction) noexcept;
 
         namespace Helper
         {
-            void setupUpdateFunction(EntityID id) noexcept;
+            void checkMovement(EntityID id) noexcept;
+            void checkDeath(EntityID id) noexcept;
         } // namespace Helper
     } // namespace Fire
 
-    void create(const sf::Vector2f& position, Enum::Type enemy_type) noexcept;
+    namespace Goomba
+    {
+        void create(const sf::Vector2f& position) noexcept;
+    
+        namespace Helper
+        {
+            void setupAnimation(EntityID id) noexcept;
+        }
+    }
+
+    namespace Spiny
+    {
+        void create(const sf::Vector2f& position) noexcept;
+    
+        namespace Helper
+        {
+            void setupAnimation(EntityID id) noexcept;
+            void checkCorrectAnimation(EntityID id) noexcept;
+        }
+    }
 
     namespace Helper
     {
-        void checkErrors(Enum::Type enemy_type);
-        void setupAnimation(EntityID id, Enum::Type type) noexcept;
-        void setupUpdateFunction(EntityID id) noexcept;
+        void setupBaseType(EntityID id, const sf::Vector2f& position, Enum::Type enemy_type) noexcept;
+        void setupComponents(EntityID id) noexcept;
         void standardMovement(EntityID id) noexcept;
     }
 } // namespace Enemy
