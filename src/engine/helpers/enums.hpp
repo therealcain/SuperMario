@@ -15,16 +15,16 @@ namespace Enum
     enum class Type {
         NONE = -1,
         MARIO = 0,
-        ONEUP,
-        BLOCK,
-        CLOUD,
+        BLOCK, 
+        CLOUD, 
         COIN,
         FIRE,
         FLOWER,
         GOOMBA,
         MUSHROOM,
         SPINY,
-        STAR
+        STAR,
+        PIPE
     };
 
     // --------- STATE ------------ //

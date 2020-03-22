@@ -22,6 +22,9 @@ namespace Entity
             System::Type::setWhatType(currentID, std::make_pair(block_type, 
                                                         type.has_value() ? type.value() : Enum::Type::NONE));
 
+            Manager::addComponent<Component::Physics>(currentID);
+            System::Physics::setRigidbody(currentID, true);
+
             Manager::addComponent<Component::GlobalVariables>(currentID);
             System::GlobalVariables::addAny(currentID); // index 0 - miscellaneous started
 
@@ -41,8 +44,7 @@ namespace Entity
                     } 
                     else if(type.value() != Enum::Type::MUSHROOM &&
                             type.value() != Enum::Type::FLOWER   &&
-                            type.value() != Enum::Type::STAR     &&
-                            type.value() != Enum::Type::ONEUP)
+                            type.value() != Enum::Type::STAR)
                     {
                         throw std::runtime_error("Type assignation is wrong! hint:\n"
                                                 "you assigned something unaccepted to question_mark block!\n");
@@ -188,6 +190,9 @@ namespace Entity
         } // namespace Helper
     } // namespace Coin
 
+    // ---------------------------------------------------------- //
+    // -------------------------- MUSHROOM ---------------------- //
+    // ---------------------------------------------------------- //
     namespace Mushroom
     {
         void create(const sf::Vector2f& position) noexcept
@@ -199,9 +204,12 @@ namespace Entity
 
             Manager::addComponent<Component::Movement>(currentID);
             Manager::addComponent<Component::Physics>(currentID);
+
             Manager::addComponent<Component::GlobalVariables>(currentID);
             System::GlobalVariables::addAny(currentID, true); // index 0 - Jumped
             System::GlobalVariables::addAny(currentID, false); // index 1 - moveLeft
+
+            System::Physics::setSpeed(currentID, POP_OUT_MUSHROOM_SPEED);
 
             Mushroom::Helper::setupUpdateFunction(currentID);
         }
@@ -215,33 +223,48 @@ namespace Entity
                 {
                     System::Physics::start(update_id);
 
-                    if(System::GlobalVariables::getAny<bool>(update_id, 0)) 
-                    {
-                        System::Movement::jump(update_id, 100, FORCE::TRUE);
-                        System::GlobalVariables::setAny(update_id, false, 0);
-                    }
-
-                    const auto blockedDirection = System::Movement::getBlockedDirection(update_id);
-                    const bool moveLeft = System::GlobalVariables::getAny<bool>(update_id, 1);
-
-                    if(blockedDirection == Enum::Direction::RIGHT) {
-                        System::GlobalVariables::setAny(update_id, false, 1);
-                    } 
-                    else if(blockedDirection == Enum::Direction::LEFT) {
-                        System::GlobalVariables::setAny(update_id, true, 1);
-                    }
-
-                    if(moveLeft) {
-                        System::Movement::moveLeft(update_id, ENEMY_SPEED);
-                    } 
-                    else {
-                        System::Movement::moveRight(update_id, ENEMY_SPEED);
-                    }
+                    Helper::jumpOutOnce(update_id);
+                    Helper::checkBlockedDirections(update_id);
+                    Helper::movement(update_id);
                 };
+            }
+
+            void jumpOutOnce(EntityID id) noexcept
+            {
+                if(System::GlobalVariables::getAny<bool>(id, 0)) 
+                {
+                    System::Movement::jump(id, 100, FORCE::TRUE);
+                    System::GlobalVariables::setAny(id, false, 0);
+                }
+            }
+
+            void checkBlockedDirections(EntityID id) noexcept
+            {
+                const auto blockedDirection = System::Movement::getBlockedDirection(id);
+                if(blockedDirection == Enum::Direction::RIGHT) {
+                    System::GlobalVariables::setAny(id, false, 1);
+                } 
+                else if(blockedDirection == Enum::Direction::LEFT) {
+                    System::GlobalVariables::setAny(id, true, 1);
+                }
+            }
+
+            void movement(EntityID id) noexcept
+            {
+                const bool moveLeft = System::GlobalVariables::getAny<bool>(id, 1);
+                if(moveLeft) {
+                    System::Movement::moveLeft(id, ENEMY_SPEED);
+                } 
+                else {
+                    System::Movement::moveRight(id, ENEMY_SPEED);
+                }
             }
         } // namespace Helper
     } // namespace Mushroom
 
+    // ---------------------------------------------------------- //
+    // -------------------------- FLOWER ------------------------ //
+    // ---------------------------------------------------------- //
     namespace Flower
     {
         void create(const sf::Vector2f& position) noexcept
@@ -256,6 +279,8 @@ namespace Entity
             Manager::addComponent<Component::GlobalVariables>(currentID);
             System::GlobalVariables::addAny(currentID, true); // index 0 - Jumped
 
+            System::Physics::setSpeed(currentID, POP_OUT_FLOWER_SPEED);
+
             Flower::Helper::setupUpdateFunction(currentID);
         }
 
@@ -267,15 +292,45 @@ namespace Entity
                 Component::updates[id] = [](EntityID update_id) -> void
                 {
                     System::Physics::start(update_id);
-
-                    if(System::GlobalVariables::getAny<bool>(update_id, 0)) 
-                    {
-                        System::Movement::jump(update_id, 100, FORCE::TRUE);
-                        System::GlobalVariables::setAny(update_id, false, 0);
-                    }
+                    Helper::jumpOutOnce(update_id);
                 };
+            }
+
+            void jumpOutOnce(EntityID id) noexcept
+            {
+                if(System::GlobalVariables::getAny<bool>(id, 0)) 
+                {
+                    System::Movement::jump(id, 100, FORCE::TRUE);
+                    System::GlobalVariables::setAny(id, false, 0);
+                }
             }
         } // namespace Helper
     } // namespace Flower
+
+    // ---------------------------------------------------------- //
+    // -------------------------- PIPE -------------------------- //
+    // ---------------------------------------------------------- //
+    namespace Pipe
+    {
+        void create(const sf::Vector2f& position, std::optional<sf::Vector2f> target_position) noexcept
+        {
+            EntityID currentID = Manager::create("assets/pipe.png");
+
+            System::Base::getSprite(currentID).setPosition(position);
+            System::Type::setType(currentID, Enum::Type::PIPE);
+
+            Manager::addComponent<Component::Physics>(currentID);
+            System::Physics::setRigidbody(currentID, true);
+
+            Manager::addComponent<Component::GlobalVariables>(currentID);
+            System::GlobalVariables::addAny(currentID, false); // index 0 - have target_position or not
+            if(target_position.has_value())
+            {
+                System::GlobalVariables::setAny(currentID, true, 0); // change target_position to true
+                System::GlobalVariables::addAny(currentID, target_position->x); // x pos
+                System::GlobalVariables::addAny(currentID, target_position->y); // y pos
+            }
+        }
+    } // namespace Pipe
 
 } // namespace Entity

@@ -110,14 +110,16 @@ namespace System
     namespace Physics
     {
         void start(EntityID id) noexcept;
+        
+        void setOnGround(EntityID id, bool on_ground) noexcept;
+        void setSpeed(EntityID id, float speed) noexcept;
+        void setRigidbody(EntityID id, bool is_rigidbody) noexcept;
 
         bool isMidAir(EntityID id) noexcept;
         bool getOnGround(EntityID id) noexcept;
         float getSpeed(EntityID id) noexcept;
         unsigned int getMaxJumpHeight(EntityID id) noexcept;
-
-        void setOnGround(EntityID id, bool on_ground) noexcept;
-        void setSpeed(EntityID id, float speed) noexcept;
+        bool getRigidbody(EntityID id) noexcept;
 
         namespace Helper
         {

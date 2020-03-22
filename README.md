@@ -25,7 +25,6 @@ This project is created with Modern C++17 and SFML ( Simple and Fast Multimedia 
 * - Star
 * - Mushroom - Added
 * - Flower - Added
-* - 1 Up
 * Multiplayer
 * Level Design Editor
 

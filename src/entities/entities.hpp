@@ -42,6 +42,9 @@ namespace Entity
         namespace Helper
         {
             void setupUpdateFunction(EntityID id) noexcept;
+            void jumpOutOnce(EntityID id) noexcept;
+            void checkBlockedDirections(EntityID id) noexcept;
+            void movement(EntityID id) noexcept;
         } // namespace Helper
     } // namespace Mushroom
 
@@ -52,8 +55,14 @@ namespace Entity
         namespace Helper
         {
             void setupUpdateFunction(EntityID id) noexcept;
+            void jumpOutOnce(EntityID id) noexcept;
         } // namespace Helper
     } // namespace Flower
+
+    namespace Pipe
+    {
+        void create(const sf::Vector2f& position, std::optional<sf::Vector2f> target_position) noexcept;
+    } // namespace Pipe
 } // namespace Entity
 
 #endif

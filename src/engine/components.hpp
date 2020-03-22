@@ -78,6 +78,7 @@ namespace Component
     // ----------- PHYSICS ---------- //
     struct Physics
     {
+        bool isRigidbody;
         bool onGround;
         float speed = FALL_SPEED;
         unsigned int maxJumpHeight = 400;

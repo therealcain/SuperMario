@@ -448,9 +448,9 @@ namespace System
                     if(secondID != id) 
                     {
                         COLLISION collision = Physics::Helper::checkIntersections(id, secondID);
-                        const auto secondIDType = Type::getType(secondID);
+                        const bool rigid = Physics::getRigidbody(secondID);
 
-                        if(secondIDType == Enum::Type::BLOCK)
+                        if(rigid)
                         {
                             if(collision == COLLISION::TOP) 
                             {
@@ -486,6 +486,24 @@ namespace System
             Physics::Helper::checkFalling(id);
         }
 
+        void setSpeed(EntityID id, float speed) noexcept
+        {
+            auto& physics = Component::physics[id];
+            physics.speed = speed;
+        }
+        
+        void setOnGround(EntityID id, bool on_ground) noexcept
+        {
+            auto& physics = Component::physics[id];
+            physics.onGround = on_ground;
+        }
+
+        void setRigidbody(EntityID id, bool is_rigidbody) noexcept
+        {
+            auto& physics = Component::physics[id];
+            physics.isRigidbody = is_rigidbody;
+        }
+
         bool isMidAir(EntityID id) noexcept
         {
             const auto& physics = Component::physics[id];
@@ -504,22 +522,21 @@ namespace System
             return physics.speed;
         }
 
-        void setSpeed(EntityID id, float speed) noexcept
-        {
-            auto& physics = Component::physics[id];
-            physics.speed = speed;
-        }
-
         unsigned int getMaxJumpHeight(EntityID id) noexcept
         {
             const auto& physics = Component::physics[id];
             return physics.maxJumpHeight;
         }
 
-        void setOnGround(EntityID id, bool on_ground) noexcept
+        bool getRigidbody(EntityID id) noexcept
         {
-            auto& physics = Component::physics[id];
-            physics.onGround = on_ground;
+            if(Component::physics.find(id) != Component::physics.end())
+            {
+                const auto& physics = Component::physics[id];
+                return physics.isRigidbody;
+            }
+
+            return false;
         }
 
         namespace Helper
