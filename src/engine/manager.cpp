@@ -9,24 +9,22 @@ namespace Manager
 {
     EntityID create(const std::string& png)
     {
-        EntityID id = Component::maxIndexes;
+        EntityID currentID = Component::bases.size();
 
-        addComponent<Component::Base>(id);
-        addComponent<Component::Type>(id);
+        addComponent<Component::Base>(currentID);
+        addComponent<Component::Type>(currentID);
 
-        if(not Component::bases[id].texture.loadFromFile(png)) {
-            throw std::runtime_error( std::string("Failed to load " + png ));
+        if(not Component::bases[currentID].texture.loadFromFile(png)) {
+            throw std::runtime_error(std::string("Failed to load " + png));
         }
 
-        Component::bases[id].sprite.setTexture(Component::bases[id].texture);
-
-        Component::maxIndexes++;
+        Component::bases[currentID].sprite.setTexture(Component::bases[currentID].texture);
 
         #ifdef ENABLE_DEBUG_MODE
-        std::cout << "ID: " << id << " Created! - " << png << std::endl;
+        std::cout << "ID: " << currentID << " Created! - " << png << std::endl;
         #endif
         
-        return id;
+        return currentID;
     }
 
     bool canAccess(EntityID id) noexcept

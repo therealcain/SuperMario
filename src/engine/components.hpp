@@ -105,7 +105,6 @@ using ComponentGlobalVarMap = std::unordered_map<EntityID, Component::GlobalVari
 
 namespace Component
 {
-    inline EntityID maxIndexes = 0;
     inline ComponentBaseMap      bases;
     inline ComponentTypeMap      types;
     inline ComponentAnimationMap animations;

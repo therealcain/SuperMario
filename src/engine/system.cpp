@@ -441,7 +441,7 @@ namespace System
             bool touchingGround = false;
             Enum::Direction blockedDirection = Enum::Direction::NONE;
 
-            for(EntityID secondID = 0; secondID < Component::maxIndexes; secondID++) 
+            for(EntityID secondID = 0; secondID < Component::bases.size(); secondID++) 
             {
                 if(Manager::canAccess(secondID)) 
                 {
