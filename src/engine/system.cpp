@@ -552,35 +552,24 @@ namespace System
                 const float sidBottom = sidGlobalBounds.top  + (sidGlobalBounds.height / 2);
 
                 if(idGlobalBounds.intersects(sidGlobalBounds)) {
-                    std::vector<COLLISION> collisionArray;
-                    // only 3 sides possible to touch
-                    collisionArray.reserve(3); 
-                    
                     // Touching on the top
                     if(sidBottom >= idGlobalBounds.top && idRight >= sidGlobalBounds.left && sidRight >= idGlobalBounds.left) {
-                        collisionArray.push_back(COLLISION::TOP);
+                        return COLLISION::TOP;
                     }
 
                     // Touching on the right
                     if(idRight >= sidGlobalBounds.left && idBottom >= sidGlobalBounds.top && sidBottom >= idGlobalBounds.top) {
-                        collisionArray.push_back(COLLISION::RIGHT);
+                        return COLLISION::RIGHT;
                     }
 
                     // Touching on the left
                     if(sidRight >= idGlobalBounds.left && idBottom >= sidGlobalBounds.top && sidBottom >= idGlobalBounds.top) {
-                        collisionArray.push_back(COLLISION::LEFT);
+                        return COLLISION::LEFT;
                     }
 
                     // Touching on the bottom
                     if(idBottom >= sidGlobalBounds.top && idRight >= sidGlobalBounds.left && sidRight >= idGlobalBounds.left) {
-                        collisionArray.push_back(COLLISION::BOTTOM);
-                    }
-
-                    // if hit multiple sides, return top
-                    if(collisionArray.size() > 1) {
-                        return COLLISION::TOP;
-                    } else if(collisionArray.size() != 0) {
-                        return collisionArray.at(0); 
+                        return COLLISION::BOTTOM;
                     }
                 }
 
