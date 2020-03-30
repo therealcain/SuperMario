@@ -16,8 +16,8 @@ This project is created with Modern C++17 and SFML ( Simple and Fast Multimedia 
 * - Goomba
 * - Spiny
 * Miscellaneous:
-* - Mushroom - Added
-* - Flower - Added
+* - Mushroom
+* - Flower
 
 # How to Compile
 CMake file is designed only to Ubuntu.

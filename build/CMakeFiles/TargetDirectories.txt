@@ -1,3 +1,0 @@
-/home/eviatar/Documents/Projects/SuperMario/build/CMakeFiles/rebuild_cache.dir
-/home/eviatar/Documents/Projects/SuperMario/build/CMakeFiles/mario.dir
-/home/eviatar/Documents/Projects/SuperMario/build/CMakeFiles/edit_cache.dir
