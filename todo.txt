@@ -1,1 +1,0 @@
-# Add .cfg file to bin, that contains all the keys

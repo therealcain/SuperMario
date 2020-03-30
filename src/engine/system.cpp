@@ -450,6 +450,8 @@ namespace System
                         COLLISION collision = Physics::Helper::checkIntersections(id, secondID);
                         const bool rigid = Physics::getRigidbody(secondID);
 
+                        // std::cout<< "Main ID: " << id << " For ID: " << secondID << "Rigid: " << rigid << std::endl;
+
                         if(rigid)
                         {
                             if(collision == COLLISION::TOP) 
@@ -551,7 +553,9 @@ namespace System
                 const float sidRight  = sidGlobalBounds.left + (sidGlobalBounds.width / 2);
                 const float sidBottom = sidGlobalBounds.top  + (sidGlobalBounds.height / 2);
 
-                if(idGlobalBounds.intersects(sidGlobalBounds)) {
+
+                if(idGlobalBounds.intersects(sidGlobalBounds)) 
+                {
                     // Touching on the top
                     if(sidBottom >= idGlobalBounds.top && idRight >= sidGlobalBounds.left && sidRight >= idGlobalBounds.left) {
                         return COLLISION::TOP;
@@ -601,6 +605,7 @@ namespace System
             {
                 const auto typeID       = Type::getType(id);
                 const auto secondIDType = Type::getType(second_id);
+
                 if(typeID == Enum::Type::MARIO)
                 {
                     // Entities

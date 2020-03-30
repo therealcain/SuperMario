@@ -4,32 +4,23 @@ This project is created with Modern C++17 and SFML ( Simple and Fast Multimedia 
 [![Video Sample](https://img.youtube.com/vi/5ow_ju4iNLo/0.jpg)](https://www.youtube.com/watch?v=5ow_ju4iNLo)
 
 # Features
-* Mario Player - Added
+* Mario Player - currently in godmode
 * Entities:
-* - Pipe
 * - Blocks:
-* - - Empty - Added
-* - - Brick - Added
-* - - Question Mark - Added
-* - Cloud - Added
-* - Coin - Added
+* - - Empty
+* - - Brick
+* - - Question Mark
+* - Cloud
+* - Coin
 * Enemies:
-* - Koopa Troopa
-* - Piranha Plant
-* - Lakitu
-* - Goomba - Added
-* - Spiny - Added
-* - Bullet Bill
-* - Bowser
+* - Goomba
+* - Spiny
 * Miscellaneous:
-* - Star
 * - Mushroom - Added
 * - Flower - Added
-* Multiplayer
-* Level Design Editor
 
 # How to Compile
-Currently this project is under development on Linux; CMake file is designed only to Ubuntu.
+CMake file is designed only to Ubuntu.
 
 Open up the Terminal in the project directory, and type this commands:
 ```

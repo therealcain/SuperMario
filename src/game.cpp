@@ -10,7 +10,7 @@
 Game::Game() 
 	: render(Window::window)
 {
-	Entity::Player::create(sf::Vector2f(180, 50), Enum::Mature::ADULT); // index 0
+	Entity::Player::create(sf::Vector2f(180, 50), Enum::Mature::CHILD); // index 0
 	Entity::Coin::create(sf::Vector2f(300, 160));
 
 	for(size_t i = 1; i < 20; i++) {
@@ -22,7 +22,6 @@ Game::Game()
 	Entity::Block::create(sf::Vector2f(180, 205), Enum::Block::EMPTY, std::nullopt);
 	Enemy::Goomba::create(sf::Vector2f(350, 50));
 	Enemy::Spiny::create(sf::Vector2f(300, 50));
-	Entity::Pipe::create(sf::Vector2f(300, 200), sf::Vector2f(220, 160));
 }
 
 bool Game::run() noexcept {

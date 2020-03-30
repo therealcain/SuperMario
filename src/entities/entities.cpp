@@ -307,30 +307,4 @@ namespace Entity
         } // namespace Helper
     } // namespace Flower
 
-    // ---------------------------------------------------------- //
-    // -------------------------- PIPE -------------------------- //
-    // ---------------------------------------------------------- // 
-    namespace Pipe
-    {
-        void create(const sf::Vector2f& position, std::optional<sf::Vector2f> target_position) noexcept
-        {
-            EntityID currentID = Manager::create("assets/pipe.png");
-
-            System::Base::getSprite(currentID).setPosition(position);
-            System::Type::setType(currentID, Enum::Type::PIPE);
-
-            Manager::addComponent<Component::Physics>(currentID);
-            System::Physics::setRigidbody(currentID, true);
-
-            Manager::addComponent<Component::GlobalVariables>(currentID);
-            System::GlobalVariables::addAny(currentID, false); // index 0 - have target_position or not
-            if(target_position.has_value())
-            {
-                System::GlobalVariables::setAny(currentID, true, 0); // change target_position to true
-                System::GlobalVariables::addAny(currentID, target_position->x); // x pos
-                System::GlobalVariables::addAny(currentID, target_position->y); // y pos
-            }
-        }
-    } // namespace Pipe
-
 } // namespace Entity
