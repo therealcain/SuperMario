@@ -1,5 +1,6 @@
 # Super Mario
 This project is created with Modern C++17 and SFML ( Simple and Fast Multimedia Library )
+This project used Entity-Component-System architectural pattern.
 
 [![Video Sample](https://img.youtube.com/vi/5ow_ju4iNLo/0.jpg)](https://www.youtube.com/watch?v=5ow_ju4iNLo)
 
